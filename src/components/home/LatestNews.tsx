@@ -9,35 +9,35 @@ const LatestNews = () => {
   const news = [
     {
       id: 1,
-      title: 'New AI Algorithm Detects Alzheimer's 10 Years Before Symptoms Appear',
-      date: 'April 2, 2025',
-      excerpt: 'Researchers at Stanford University have developed a new AI system that can detect early signs of Alzheimer\'s disease up to a decade before symptoms appear.',
-      category: 'Research',
-      image: 'https://images.unsplash.com/photo-1563213126-a4273aed2016?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      title: "New AI Algorithm Detects Alzheimer's 10 Years Before Symptoms Appear",
+      date: "April 2, 2025",
+      excerpt: "Researchers at Stanford University have developed a new AI system that can detect early signs of Alzheimer's disease up to a decade before symptoms appear.",
+      category: "Research",
+      image: "https://images.unsplash.com/photo-1563213126-a4273aed2016?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: 2,
-      title: 'Blood Test for Alzheimer's Shows Promising Results in Large Trial',
-      date: 'March 28, 2025',
-      excerpt: 'A new blood test that detects biomarkers associated with Alzheimer\'s disease has shown 94% accuracy in a clinical trial with over 1,500 participants.',
-      category: 'Clinical Trials',
-      image: 'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      title: "Blood Test for Alzheimer's Shows Promising Results in Large Trial",
+      date: "March 28, 2025",
+      excerpt: "A new blood test that detects biomarkers associated with Alzheimer's disease has shown 94% accuracy in a clinical trial with over 1,500 participants.",
+      category: "Clinical Trials",
+      image: "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: 3,
-      title: 'International Consortium Launches $100M Funding for AI in Dementia Research',
-      date: 'March 15, 2025',
-      excerpt: 'A global initiative bringing together researchers, technology companies, and healthcare providers has announced major funding for AI applications in dementia research.',
-      category: 'Funding',
-      image: 'https://images.unsplash.com/photo-1579154341098-e4e158cc7f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      title: "International Consortium Launches $100M Funding for AI in Dementia Research",
+      date: "March 15, 2025",
+      excerpt: "A global initiative bringing together researchers, technology companies, and healthcare providers has announced major funding for AI applications in dementia research.",
+      category: "Funding",
+      image: "https://images.unsplash.com/photo-1579154341098-e4e158cc7f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: 4,
-      title: 'Virtual Reality Shows Promise in Cognitive Assessment for Alzheimer's Patients',
-      date: 'March 10, 2025',
-      excerpt: 'New research shows that immersive virtual reality environments can provide more sensitive measures of spatial navigation deficits in early Alzheimer\'s disease.',
-      category: 'Technology',
-      image: 'https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      title: "Virtual Reality Shows Promise in Cognitive Assessment for Alzheimer's Patients",
+      date: "March 10, 2025",
+      excerpt: "New research shows that immersive virtual reality environments can provide more sensitive measures of spatial navigation deficits in early Alzheimer's disease.",
+      category: "Technology",
+      image: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     }
   ];
 

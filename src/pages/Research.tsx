@@ -1,89 +1,102 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Download, Filter, Search, SortDesc, BookOpen } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Download, FileText, ArrowRight, Brain, BarChart2, Database } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Research = () => {
-  // Sample research papers data
-  const papers = [
+  const [activeTab, setActiveTab] = useState('publications');
+  
+  const publications = [
     {
       id: 1,
-      title: 'Deep Learning for Alzheimer\'s Detection from MRI Scans',
-      authors: 'Johnson, Smith, et al.',
-      journal: 'Neural Computation in Medicine',
-      year: 2023,
-      abstract: 'This study explores using convolutional neural networks to identify early signs of Alzheimer\'s disease from MRI brain scans with 94% accuracy. The model was trained on a dataset of over 10,000 MRI scans and validated against clinical diagnoses.',
-      tags: ['Deep Learning', 'MRI', 'Early Detection'],
-      citations: 87,
-      category: 'Imaging Analysis'
+      title: "Deep Learning Approaches for Early Detection of Alzheimer's Disease",
+      authors: "Chen, L., Singh, R., Patel, K., & Johnson, M.",
+      journal: "Journal of Computational Neuroscience",
+      year: 2025,
+      abstract: "In this study, we present a novel deep learning architecture that integrates convolutional neural networks with transformer models to analyze longitudinal MRI data. Our approach achieves a 92% accuracy in detecting early signs of Alzheimer's disease, significantly outperforming traditional machine learning methods.",
+      link: "#"
     },
     {
       id: 2,
-      title: 'Predictive Modeling for Alzheimer\'s Progression',
-      authors: 'Williams, Garcia, et al.',
-      journal: 'AI in Healthcare',
-      year: 2023,
-      abstract: 'A machine learning approach for predicting the progression of Alzheimer\'s disease across different stages using multimodal data. The model incorporates cognitive assessments, biomarkers, and imaging data to forecast disease trajectory with high precision.',
-      tags: ['Machine Learning', 'Disease Progression', 'Predictive Modeling'],
-      citations: 63,
-      category: 'Predictive Analytics'
+      title: "Speech Pattern Analysis for Cognitive Decline Detection",
+      authors: "Taylor, A., Gupta, S., & Williams, E.",
+      journal: "IEEE Transactions on Biomedical Engineering",
+      year: 2024,
+      abstract: "We demonstrate a natural language processing framework that analyzes subtle changes in speech patterns associated with cognitive decline. By tracking linguistic features such as syntactic complexity, semantic coherence, and pause distribution, our model can identify mild cognitive impairment with 87% sensitivity and 89% specificity.",
+      link: "#"
     },
     {
       id: 3,
-      title: 'Speech Pattern Analysis for Early Detection',
-      authors: 'Lee, Brown, et al.',
-      journal: 'Computational Linguistics in Medicine',
-      year: 2022,
-      abstract: 'Analyzing linguistic patterns and speech characteristics to detect subtle cognitive changes indicative of early-stage Alzheimer\'s. This research demonstrates how natural language processing can identify cognitive decline before traditional screening methods.',
-      tags: ['NLP', 'Speech Analysis', 'Early Detection'],
-      citations: 42,
-      category: 'Language Processing'
-    },
-    {
-      id: 4,
-      title: 'Multi-Modal Deep Learning for Alzheimer\'s Diagnosis',
-      authors: 'Chen, Rodriguez, et al.',
-      journal: 'Frontiers in Neural Engineering',
-      year: 2023,
-      abstract: 'This paper presents a novel multi-modal deep learning approach that combines imaging, genetic, and clinical data to improve diagnostic accuracy for Alzheimer\'s disease. The integrated model outperforms single-modality approaches.',
-      tags: ['Multi-modal', 'Deep Learning', 'Diagnostics'],
-      citations: 56,
-      category: 'Integrated AI'
-    },
-    {
-      id: 5,
-      title: 'Retinal Imaging Biomarkers for Alzheimer\'s Detection',
-      authors: 'Patel, Kim, et al.',
-      journal: 'Digital Ophthalmology',
-      year: 2023,
-      abstract: 'An investigation into using retinal imaging combined with deep learning to identify early biomarkers of Alzheimer\'s disease. The study demonstrates that retinal changes can be detected and analyzed using AI to predict cognitive decline.',
-      tags: ['Retinal Imaging', 'Biomarkers', 'Computer Vision'],
-      citations: 29,
-      category: 'Novel Biomarkers'
-    },
-    {
-      id: 6,
-      title: 'Explainable AI for Clinical Decision Support in Alzheimer\'s Care',
-      authors: 'Thompson, Wilson, et al.',
-      journal: 'Medical AI Ethics',
-      year: 2022,
-      abstract: 'Developing transparent AI models that provide clinicians with interpretable results for Alzheimer\'s diagnosis. This research focuses on making complex AI predictions understandable to healthcare providers for better clinical decision-making.',
-      tags: ['Explainable AI', 'Clinical Support', 'Ethics'],
-      citations: 38,
-      category: 'Clinical Applications'
+      title: "Multimodal Biomarker Integration for Personalized Alzheimer's Risk Assessment",
+      authors: "Rodriguez, J., Kim, H., & Brown, T.",
+      journal: "Nature Machine Intelligence",
+      year: 2024,
+      abstract: "This paper presents a novel approach to Alzheimer's risk assessment that integrates imaging biomarkers, genetic profiles, clinical history, and cognitive test performance. Our hierarchical Bayesian model provides personalized risk stratification and has been validated in a prospective cohort study involving 1,200 participants.",
+      link: "#"
     }
   ];
-
-  // Comprehensive review paper for download
-  const reviewPaper = {
-    title: 'Comprehensive Review: Artificial Intelligence in Alzheimer's Detection and Research (2023)',
-    authors: 'AlzInsight Research Consortium',
-    pages: 42,
-    abstract: 'This comprehensive review examines the state-of-the-art applications of artificial intelligence in Alzheimer's disease detection, diagnosis, and research. We analyze over 200 peer-reviewed studies from the last decade, highlighting breakthrough technologies, methodological approaches, and clinical implications.'
-  };
+  
+  const datasets = [
+    {
+      id: 1,
+      title: "Longitudinal Brain MRI Dataset",
+      description: "A collection of 5,000+ MRI scans from 1,200 patients over a 10-year period, including those who progressed from healthy to mild cognitive impairment to Alzheimer's disease.",
+      size: "2.3 TB",
+      samples: 5000,
+      features: ["T1-weighted MRI", "T2-weighted MRI", "FLAIR sequences", "Cognitive assessment scores"],
+      link: "#"
+    },
+    {
+      id: 2,
+      title: "Speech and Language Corpus",
+      description: "Audio recordings and transcriptions from 800 participants performing various verbal tasks, including picture description, story recall, and spontaneous speech.",
+      size: "450 GB",
+      samples: 3200,
+      features: ["Raw audio", "Transcriptions", "Acoustic features", "Linguistic annotations"],
+      link: "#"
+    },
+    {
+      id: 3,
+      title: "Multimodal Alzheimer's Biomarker Database",
+      description: "A comprehensive database combining imaging, genetic, clinical, and cognitive data from 1,500 individuals across different stages of cognitive health.",
+      size: "1.8 TB",
+      samples: 1500,
+      features: ["MRI data", "PET scans", "Genetic profiles", "Clinical history", "Cognitive assessments"],
+      link: "#"
+    }
+  ];
+  
+  const tools = [
+    {
+      id: 1,
+      title: "BrainScan-AI",
+      description: "An open-source tool for automated processing and analysis of brain MRI scans using our pre-trained deep learning models.",
+      type: "Python package",
+      features: ["Automated segmentation", "Feature extraction", "Anomaly detection", "Longitudinal analysis"],
+      link: "#"
+    },
+    {
+      id: 2,
+      title: "CogniSpeech Analyzer",
+      description: "A web-based platform for analyzing speech patterns to detect subtle signs of cognitive decline.",
+      type: "Web application",
+      features: ["Speech recognition", "Linguistic feature extraction", "Temporal pattern analysis", "Risk score generation"],
+      link: "#"
+    },
+    {
+      id: 3,
+      title: "AlzPredict API",
+      description: "A comprehensive API that integrates multiple biomarkers to provide personalized Alzheimer's risk assessment.",
+      type: "REST API",
+      features: ["Multimodal data integration", "Personalized risk scores", "Longitudinal tracking", "Clinical decision support"],
+      link: "#"
+    }
+  ];
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -91,132 +104,198 @@ const Research = () => {
       <main className="flex-grow">
         {/* Hero Section */}
         <div className="bg-alzheimer-tertiary">
-          <div className="section-container py-16 md:py-24">
+          <div className="section-container py-16">
             <div className="max-w-3xl">
-              <h1 className="text-4xl md:text-5xl font-bold text-alzheimer-dark">Research Findings</h1>
-              <p className="mt-6 text-xl text-gray-600">
-                Explore cutting-edge studies on AI and ML applications in Alzheimer's detection and research.
+              <h1 className="text-4xl font-bold text-alzheimer-dark">Research & Resources</h1>
+              <p className="mt-4 text-xl text-gray-600">
+                Explore our publications, datasets, and tools advancing Alzheimer's detection through artificial intelligence
               </p>
             </div>
           </div>
         </div>
 
-        {/* Featured Review Paper */}
-        <div className="section-container py-12">
-          <Card className="border-2 border-alzheimer-tertiary overflow-hidden">
-            <CardContent className="p-0">
-              <div className="bg-gradient-to-r from-alzheimer-primary to-alzheimer-secondary p-6 text-white">
-                <div className="flex items-center mb-3">
-                  <BookOpen className="mr-2" />
-                  <span className="font-medium">Featured Review Paper</span>
-                </div>
-                <h2 className="text-2xl font-bold mb-2">{reviewPaper.title}</h2>
-                <p className="text-sm opacity-90">{reviewPaper.authors} • {reviewPaper.pages} pages</p>
-              </div>
-              <div className="p-6">
-                <p className="text-gray-600 mb-6">{reviewPaper.abstract}</p>
-                <Button className="bg-alzheimer-primary hover:bg-alzheimer-accent flex items-center">
-                  <Download size={16} className="mr-2" /> Download Full Paper (PDF)
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Research Papers Section */}
-        <div className="section-container py-12">
-          {/* Search and Filter Controls */}
-          <div className="mb-8 flex flex-col md:flex-row gap-4 justify-between">
-            <div className="relative flex-grow max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-              <input
-                type="text"
-                placeholder="Search research papers..."
-                className="pl-10 py-2 pr-4 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-alzheimer-primary"
-              />
-            </div>
-            <div className="flex flex-wrap gap-4">
-              <Button variant="outline" className="flex items-center">
-                <Filter size={16} className="mr-2" /> Filter
-              </Button>
-              <Button variant="outline" className="flex items-center">
-                <SortDesc size={16} className="mr-2" /> Sort by: Newest
-              </Button>
-            </div>
-          </div>
-          
-          {/* Research Papers Grid */}
-          <div className="grid gap-6 md:grid-cols-2">
-            {papers.map((paper) => (
-              <Card key={paper.id} className="border border-gray-200 hover:shadow-md transition-shadow duration-300">
-                <CardContent className="p-6">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="flex-grow">
-                      <h3 className="text-xl font-semibold text-alzheimer-dark">{paper.title}</h3>
-                      <p className="text-sm text-gray-600">{paper.authors} • {paper.journal}, {paper.year}</p>
-                    </div>
-                    <span className="inline-block px-2 py-1 text-xs font-medium bg-alzheimer-tertiary text-alzheimer-primary rounded-full">
-                      {paper.category}
+        {/* Featured Paper */}
+        <div className="bg-white py-12">
+          <div className="section-container">
+            <div className="bg-gradient-to-r from-alzheimer-light to-alzheimer-tertiary rounded-lg p-6 md:p-8 lg:p-10">
+              <div className="md:flex items-center">
+                <div className="md:w-3/4 md:pr-8">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <span className="inline-block px-2 py-1 text-xs font-medium bg-alzheimer-primary text-white rounded-full">
+                      Featured Paper
+                    </span>
+                    <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+                      2025
                     </span>
                   </div>
-                  
-                  <p className="text-gray-600 text-sm mb-4">{paper.abstract}</p>
-                  
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {paper.tags.map((tag, index) => (
-                      <span key={index} className="inline-block px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded-full">
-                        {tag}
-                      </span>
-                    ))}
+                  <h2 className="text-2xl md:text-3xl font-bold text-alzheimer-dark mb-4">
+                    Comprehensive Review: AI Applications in Alzheimer's Detection and Diagnosis
+                  </h2>
+                  <p className="text-gray-700 mb-6">
+                    This comprehensive review explores the current state of artificial intelligence applications in Alzheimer's disease detection, highlighting promising approaches, challenges, and future directions. The paper covers deep learning techniques for image analysis, speech and language processing methods, multimodal data integration, and ethical considerations.
+                  </p>
+                  <Button className="bg-alzheimer-primary hover:bg-alzheimer-accent flex items-center">
+                    <Download size={16} className="mr-2" />
+                    Download Review Paper
+                  </Button>
+                </div>
+                <div className="md:w-1/4 mt-6 md:mt-0">
+                  <div className="bg-white p-5 rounded-lg shadow-md">
+                    <FileText size={48} className="text-alzheimer-primary mx-auto mb-4" />
+                    <div className="text-center">
+                      <p className="text-sm text-gray-500 mb-1">Published in</p>
+                      <p className="font-medium text-alzheimer-dark mb-3">Nature Reviews Neuroscience</p>
+                      <p className="text-sm text-gray-500 mb-1">Citation Impact</p>
+                      <p className="font-medium text-alzheimer-primary">52 citations</p>
+                    </div>
                   </div>
-                  
-                  <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                    <span className="text-xs text-gray-500">Citations: {paper.citations}</span>
-                    <Button variant="ghost" size="sm" className="flex items-center text-alzheimer-primary">
-                      <Download size={16} className="mr-1" /> PDF
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          
-          {/* Pagination */}
-          <div className="mt-8 flex justify-center">
-            <nav className="flex items-center space-x-1">
-              <Button variant="outline" size="sm" disabled>
-                Previous
-              </Button>
-              <Button variant="outline" size="sm" className="bg-alzheimer-primary text-white hover:bg-alzheimer-accent">
-                1
-              </Button>
-              <Button variant="outline" size="sm">
-                2
-              </Button>
-              <Button variant="outline" size="sm">
-                3
-              </Button>
-              <span className="px-2">...</span>
-              <Button variant="outline" size="sm">
-                8
-              </Button>
-              <Button variant="outline" size="sm">
-                Next
-              </Button>
-            </nav>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Research Collaboration CTA */}
-        <div className="bg-alzheimer-light py-16">
+        
+        {/* Research Tabs */}
+        <div className="section-container py-12">
+          <Tabs defaultValue="publications" onValueChange={setActiveTab} className="w-full">
+            <div className="flex justify-center mb-8">
+              <TabsList>
+                <TabsTrigger value="publications" className="px-6">Publications</TabsTrigger>
+                <TabsTrigger value="datasets" className="px-6">Datasets</TabsTrigger>
+                <TabsTrigger value="tools" className="px-6">Tools & Software</TabsTrigger>
+              </TabsList>
+            </div>
+            
+            {/* Publications Tab */}
+            <TabsContent value="publications">
+              <div className="grid gap-6">
+                {publications.map((pub) => (
+                  <Card key={pub.id} className="border border-gray-200 hover:shadow-md transition-shadow">
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-bold text-alzheimer-dark mb-2">
+                        {pub.title}
+                      </h3>
+                      <p className="text-gray-600 mb-4">
+                        {pub.authors} • {pub.journal} • {pub.year}
+                      </p>
+                      <p className="text-gray-700 mb-4">
+                        {pub.abstract}
+                      </p>
+                      <Button asChild variant="outline" className="border-alzheimer-primary text-alzheimer-primary">
+                        <Link to={pub.link} className="flex items-center">
+                          Read Full Paper <ArrowRight size={16} className="ml-2" />
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+            
+            {/* Datasets Tab */}
+            <TabsContent value="datasets">
+              <div className="grid gap-6">
+                {datasets.map((dataset) => (
+                  <Card key={dataset.id} className="border border-gray-200 hover:shadow-md transition-shadow">
+                    <CardContent className="p-6">
+                      <div className="flex items-start">
+                        <div className="mr-6">
+                          <Database className="h-8 w-8 text-alzheimer-primary" />
+                        </div>
+                        <div className="flex-grow">
+                          <h3 className="text-xl font-bold text-alzheimer-dark mb-2">
+                            {dataset.title}
+                          </h3>
+                          <p className="text-gray-700 mb-4">
+                            {dataset.description}
+                          </p>
+                          <div className="grid md:grid-cols-3 gap-4 mb-4">
+                            <div>
+                              <p className="text-sm text-gray-500">Size</p>
+                              <p className="font-medium">{dataset.size}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-500">Samples</p>
+                              <p className="font-medium">{dataset.samples}</p>
+                            </div>
+                          </div>
+                          <div className="mb-4">
+                            <p className="text-sm text-gray-500 mb-2">Features</p>
+                            <div className="flex flex-wrap gap-2">
+                              {dataset.features.map((feature, idx) => (
+                                <span 
+                                  key={idx} 
+                                  className="px-2 py-1 bg-alzheimer-tertiary text-alzheimer-primary text-xs font-medium rounded-full"
+                                >
+                                  {feature}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <Button asChild variant="outline" className="border-alzheimer-primary text-alzheimer-primary">
+                            <Link to={dataset.link} className="flex items-center">
+                              Access Dataset <ArrowRight size={16} className="ml-2" />
+                            </Link>
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+            
+            {/* Tools Tab */}
+            <TabsContent value="tools">
+              <div className="grid md:grid-cols-2 gap-6">
+                {tools.map((tool) => (
+                  <Card key={tool.id} className="border border-gray-200 hover:shadow-md transition-shadow">
+                    <CardContent className="p-6">
+                      <h3 className="text-xl font-bold text-alzheimer-dark mb-1">
+                        {tool.title}
+                      </h3>
+                      <p className="text-alzheimer-primary text-sm mb-3">{tool.type}</p>
+                      <p className="text-gray-700 mb-4">
+                        {tool.description}
+                      </p>
+                      <div className="mb-4">
+                        <p className="text-sm text-gray-500 mb-2">Key Features</p>
+                        <ul className="list-disc list-inside text-gray-700 space-y-1">
+                          {tool.features.map((feature, idx) => (
+                            <li key={idx}>{feature}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <Button asChild variant="outline" className="border-alzheimer-primary text-alzheimer-primary">
+                        <Link to={tool.link} className="flex items-center">
+                          Explore Tool <ArrowRight size={16} className="ml-2" />
+                        </Link>
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+        
+        {/* Call to Action */}
+        <div className="bg-alzheimer-primary py-16">
           <div className="section-container text-center">
-            <h2 className="text-3xl font-bold text-alzheimer-dark mb-6">Interested in Research Collaboration?</h2>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Join our network of researchers and institutions working to advance Alzheimer's detection and treatment through AI and machine learning.
-            </p>
-            <Button className="bg-alzheimer-primary hover:bg-alzheimer-accent text-white px-8 py-3 text-base">
-              Connect with Researchers
-            </Button>
+            <div className="max-w-2xl mx-auto">
+              <h2 className="text-2xl font-bold text-white mb-4">Collaborate With Us</h2>
+              <p className="text-white text-opacity-90 mb-6">
+                We're always looking for researchers, institutions, and organizations to collaborate on advancing AI applications for Alzheimer's detection and diagnosis
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button className="bg-white text-alzheimer-primary hover:bg-alzheimer-tertiary">
+                  Research Opportunities
+                </Button>
+                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-alzheimer-primary">
+                  Contact Research Team
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </main>

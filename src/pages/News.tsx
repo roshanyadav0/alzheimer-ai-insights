@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -11,71 +10,71 @@ const News = () => {
   // Sample news articles data
   const featuredNews = {
     id: 1,
-    title: 'New AI Algorithm Detects Alzheimer's 10 Years Before Symptoms Appear',
-    date: 'April 2, 2025',
-    author: 'Dr. Sarah Chen',
-    excerpt: 'Researchers at Stanford University have developed a new AI system that can detect early signs of Alzheimer\'s disease up to a decade before symptoms appear. The groundbreaking technology analyzes subtle patterns in brain imaging data that would be imperceptible to human observers.',
-    content: 'The revolutionary system, developed by a team led by Dr. James Harrison, combines advanced deep learning algorithms with a novel approach to analyzing longitudinal brain scan data. "What makes our system unique is its ability to detect minute changes over time that are invisible to the naked eye," explains Dr. Harrison. The AI model was trained on over 50,000 brain scans from patients who were eventually diagnosed with Alzheimer\'s, as well as those who remained cognitively healthy. In validation studies, the system demonstrated 94% accuracy in predicting which patients would develop the disease within the next decade.',
-    category: 'Research',
-    image: 'https://images.unsplash.com/photo-1563213126-a4273aed2016?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+    title: "New AI Algorithm Detects Alzheimer's 10 Years Before Symptoms Appear",
+    date: "April 2, 2025",
+    author: "Dr. Sarah Chen",
+    excerpt: "Researchers at Stanford University have developed a new AI system that can detect early signs of Alzheimer's disease up to a decade before symptoms appear. The groundbreaking technology analyzes subtle patterns in brain imaging data that would be imperceptible to human observers.",
+    content: "The revolutionary system, developed by a team led by Dr. James Harrison, combines advanced deep learning algorithms with a novel approach to analyzing longitudinal brain scan data. \"What makes our system unique is its ability to detect minute changes over time that are invisible to the naked eye,\" explains Dr. Harrison. The AI model was trained on over 50,000 brain scans from patients who were eventually diagnosed with Alzheimer's, as well as those who remained cognitively healthy. In validation studies, the system demonstrated 94% accuracy in predicting which patients would develop the disease within the next decade.",
+    category: "Research",
+    image: "https://images.unsplash.com/photo-1563213126-a4273aed2016?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
   };
 
   const newsItems = [
     {
       id: 2,
-      title: 'Blood Test for Alzheimer's Shows Promising Results in Large Trial',
-      date: 'March 28, 2025',
-      excerpt: 'A new blood test that detects biomarkers associated with Alzheimer\'s disease has shown 94% accuracy in a clinical trial with over 1,500 participants.',
-      category: 'Clinical Trials',
-      image: 'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      title: "Blood Test for Alzheimer's Shows Promising Results in Large Trial",
+      date: "March 28, 2025",
+      excerpt: "A new blood test that detects biomarkers associated with Alzheimer's disease has shown 94% accuracy in a clinical trial with over 1,500 participants.",
+      category: "Clinical Trials",
+      image: "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: 3,
-      title: 'International Consortium Launches $100M Funding for AI in Dementia Research',
-      date: 'March 15, 2025',
-      excerpt: 'A global initiative bringing together researchers, technology companies, and healthcare providers has announced major funding for AI applications in dementia research.',
-      category: 'Funding',
-      image: 'https://images.unsplash.com/photo-1579154341098-e4e158cc7f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      title: "International Consortium Launches $100M Funding for AI in Dementia Research",
+      date: "March 15, 2025",
+      excerpt: "A global initiative bringing together researchers, technology companies, and healthcare providers has announced major funding for AI applications in dementia research.",
+      category: "Funding",
+      image: "https://images.unsplash.com/photo-1579154341098-e4e158cc7f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: 4,
-      title: 'Virtual Reality Shows Promise in Cognitive Assessment for Alzheimer's Patients',
-      date: 'March 10, 2025',
-      excerpt: 'New research shows that immersive virtual reality environments can provide more sensitive measures of spatial navigation deficits in early Alzheimer\'s disease.',
-      category: 'Technology',
-      image: 'https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      title: "Virtual Reality Shows Promise in Cognitive Assessment for Alzheimer's Patients",
+      date: "March 10, 2025",
+      excerpt: "New research shows that immersive virtual reality environments can provide more sensitive measures of spatial navigation deficits in early Alzheimer's disease.",
+      category: "Technology",
+      image: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: 5,
-      title: 'Machine Learning Model Predicts Drug Response in Alzheimer's Patients',
-      date: 'March 5, 2025',
-      excerpt: 'A new predictive model helps identify which patients are most likely to benefit from specific Alzheimer\'s medications, paving the way for personalized treatment plans.',
-      category: 'Treatment',
-      image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      title: "Machine Learning Model Predicts Drug Response in Alzheimer's Patients",
+      date: "March 5, 2025",
+      excerpt: "A new predictive model helps identify which patients are most likely to benefit from specific Alzheimer's medications, paving the way for personalized treatment plans.",
+      category: "Treatment",
+      image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: 6,
-      title: 'Voice Analysis App Can Detect Cognitive Decline, Study Finds',
-      date: 'February 28, 2025',
-      excerpt: 'Researchers have developed a smartphone application that analyzes speech patterns to identify early signs of cognitive decline with 88% accuracy.',
-      category: 'Mobile Health',
-      image: 'https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      title: "Voice Analysis App Can Detect Cognitive Decline, Study Finds",
+      date: "February 28, 2025",
+      excerpt: "Researchers have developed a smartphone application that analyzes speech patterns to identify early signs of cognitive decline with 88% accuracy.",
+      category: "Mobile Health",
+      image: "https://images.unsplash.com/photo-1611162618071-b39a2ec055fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: 7,
-      title: 'New Guidelines for AI Implementation in Alzheimer's Diagnostics Released',
-      date: 'February 20, 2025',
-      excerpt: 'Leading health organizations have published comprehensive guidelines for the responsible implementation of AI tools in clinical settings for Alzheimer\'s diagnosis.',
-      category: 'Policy',
-      image: 'https://images.unsplash.com/photo-1576089073624-b5f95db1e0f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      title: "New Guidelines for AI Implementation in Alzheimer's Diagnostics Released",
+      date: "February 20, 2025",
+      excerpt: "Leading health organizations have published comprehensive guidelines for the responsible implementation of AI tools in clinical settings for Alzheimer's diagnosis.",
+      category: "Policy",
+      image: "https://images.unsplash.com/photo-1576089073624-b5f95db1e0f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: 8,
-      title: 'Retinal Scan AI Detects Alzheimer's Biomarkers with High Accuracy',
-      date: 'February 15, 2025',
-      excerpt: 'A non-invasive retinal imaging technique combined with artificial intelligence can identify Alzheimer\'s biomarkers years before cognitive symptoms emerge.',
-      category: 'Diagnostics',
-      image: 'https://images.unsplash.com/photo-1551601651-bc60f254d532?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
+      title: "Retinal Scan AI Detects Alzheimer's Biomarkers with High Accuracy",
+      date: "February 15, 2025",
+      excerpt: "A non-invasive retinal imaging technique combined with artificial intelligence can identify Alzheimer's biomarkers years before cognitive symptoms emerge.",
+      category: "Diagnostics",
+      image: "https://images.unsplash.com/photo-1551601651-bc60f254d532?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     }
   ];
 
