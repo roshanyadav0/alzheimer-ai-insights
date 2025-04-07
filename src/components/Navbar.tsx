@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Brain, UserCircle } from 'lucide-react';
+import { Menu, X, Brain, UserCircle, MessageSquare } from 'lucide-react';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -48,6 +48,10 @@ const Navbar = () => {
               </Link>
               <Link to="/news" className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-alzheimer-dark hover:text-alzheimer-primary hover:border-alzheimer-primary transition-colors">
                 Latest News
+              </Link>
+              <Link to="/forum" className="inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium text-alzheimer-dark hover:text-alzheimer-primary hover:border-alzheimer-primary transition-colors">
+                <MessageSquare size={18} className="mr-1" />
+                Forum
               </Link>
             </div>
           </div>
@@ -113,6 +117,9 @@ const Navbar = () => {
           </Link>
           <Link to="/news" className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-alzheimer-dark hover:bg-alzheimer-tertiary hover:border-alzheimer-primary transition duration-150 ease-in-out">
             Latest News
+          </Link>
+          <Link to="/forum" className="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-alzheimer-dark hover:bg-alzheimer-tertiary hover:border-alzheimer-primary transition duration-150 ease-in-out">
+            Forum
           </Link>
           <div className="flex flex-col space-y-2 px-3 py-2">
             {isLoggedIn ? (
