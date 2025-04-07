@@ -29,26 +29,26 @@ const ForumContent: React.FC = () => {
       const sampleTopics: Topic[] = [
         {
           id: '1',
-          title: 'Latest advancements in Alzheimer's detection using AI',
+          title: 'Latest advancements in Alzheimer\'s detection using AI',
           author: 'Dr. Smith',
           authorId: 'admin',
           category: 'research',
           createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
           replies: 12,
           views: 145,
-          content: 'I'd like to discuss the recent paper on using convolutional neural networks for early Alzheimer's detection through brain imaging. Has anyone implemented similar models?',
+          content: 'I\'d like to discuss the recent paper on using convolutional neural networks for early Alzheimer\'s detection through brain imaging. Has anyone implemented similar models?',
           lastActivity: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
         },
         {
           id: '2',
-          title: 'Genetic markers and their role in predicting Alzheimer's risk',
+          title: 'Genetic markers and their role in predicting Alzheimer\'s risk',
           author: 'ResearcherX',
           authorId: 'researcher1',
           category: 'discussion',
           createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
           replies: 8,
           views: 94,
-          content: 'Recent studies have identified several genetic markers strongly associated with Alzheimer's risk. Let's discuss how these findings could be integrated into our predictive models.',
+          content: 'Recent studies have identified several genetic markers strongly associated with Alzheimer\'s risk. Let\'s discuss how these findings could be integrated into our predictive models.',
           lastActivity: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
         },
         {
@@ -60,7 +60,7 @@ const ForumContent: React.FC = () => {
           createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
           replies: 15,
           views: 203,
-          content: 'I'm interested in hearing about experiences with early intervention programs following an Alzheimer's diagnosis. What approaches have shown the most promise for quality of life improvements?',
+          content: 'I\'m interested in hearing about experiences with early intervention programs following an Alzheimer\'s diagnosis. What approaches have shown the most promise for quality of life improvements?',
           lastActivity: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
         }
       ];
@@ -85,8 +85,8 @@ const ForumContent: React.FC = () => {
     <div className="container mx-auto max-w-6xl">
       <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-alzheimer-dark mb-2">Alzheimer's Research Forum</h1>
-          <p className="text-gray-600">Connect with researchers and community members to discuss the latest in Alzheimer's research</p>
+          <h1 className="text-3xl font-bold text-alzheimer-dark mb-2">Alzheimer&apos;s Research Forum</h1>
+          <p className="text-gray-600">Connect with researchers and community members to discuss the latest in Alzheimer&apos;s research</p>
         </div>
         {isLoggedIn ? (
           <Button 
