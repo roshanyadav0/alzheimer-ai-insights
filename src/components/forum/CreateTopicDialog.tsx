@@ -22,7 +22,7 @@ const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({
 }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [category, setCategory] = useState('discussion');
+  const [category, setCategory] = useState<'research' | 'discussion' | 'support' | 'news'>('discussion');
   const [username, setUsername] = useState('');
   const [userId, setUserId] = useState('');
   const { toast } = useToast();
@@ -64,7 +64,7 @@ const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({
       content: content.trim(),
       author: username,
       authorId: userId,
-      category,
+      category: category,
       createdAt: new Date().toISOString(),
       lastActivity: new Date().toISOString(),
       replies: 0,
@@ -106,7 +106,10 @@ const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({
           
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Select value={category} onValueChange={setCategory}>
+            <Select 
+              value={category} 
+              onValueChange={(value: 'research' | 'discussion' | 'support' | 'news') => setCategory(value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
