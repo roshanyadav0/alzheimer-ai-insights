@@ -38,7 +38,7 @@ const ForumContent: React.FC = () => {
       return;
     }
 
-    setTopics(data || []);
+    setTopics(data as Topic[] || []);
   };
 
   const setupRealtimeSubscription = () => {

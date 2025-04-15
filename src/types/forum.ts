@@ -5,7 +5,7 @@ export interface Topic {
   content: string;
   author_id: string;
   author_name: string;
-  category: 'research' | 'discussion' | 'support' | 'news';
+  category: string;
   created_at: string;
   last_activity: string;
   replies_count: number;
