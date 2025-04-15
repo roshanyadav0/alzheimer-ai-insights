@@ -14,15 +14,31 @@ const ForumContent: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Initial load of topics and authentication check
+    // Initial load of topics
     loadTopics();
     setupRealtimeSubscription();
-    checkUser();
+    
+    // Check authentication status on component mount
+    const checkInitialSession = async () => {
+      try {
+        console.log('Initial session check...');
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log('Initial session result:', !!session?.user);
+        setIsLoggedIn(!!session?.user);
+      } catch (error) {
+        console.error('Error checking initial session:', error);
+      } finally {
+        setIsAuthChecked(true);
+      }
+    };
+    
+    checkInitialSession();
 
-    // Listen for authentication state changes
+    // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state changed:', event, !!session?.user);
       setIsLoggedIn(!!session?.user);
@@ -33,17 +49,6 @@ const ForumContent: React.FC = () => {
       subscription.unsubscribe();
     };
   }, []);
-
-  const checkUser = async () => {
-    try {
-      console.log('Checking user session...');
-      const { data: { session } } = await supabase.auth.getSession();
-      console.log('Session data:', !!session?.user);
-      setIsLoggedIn(!!session?.user);
-    } catch (error) {
-      console.error('Error checking user:', error);
-    }
-  };
 
   const loadTopics = async () => {
     const { data, error } = await supabase
@@ -89,7 +94,7 @@ const ForumContent: React.FC = () => {
   };
 
   // Debug rendering to help troubleshoot
-  console.log('Rendering ForumContent, isLoggedIn:', isLoggedIn);
+  console.log('Rendering ForumContent, isLoggedIn:', isLoggedIn, 'isAuthChecked:', isAuthChecked);
 
   return (
     <div className="container mx-auto max-w-6xl">
@@ -146,4 +151,3 @@ const ForumContent: React.FC = () => {
 };
 
 export default ForumContent;
-
