@@ -9,13 +9,16 @@ import TopicList from './TopicList';
 import CreateTopicDialog from './CreateTopicDialog';
 import { Topic } from '@/types/forum';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const ForumContent: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [currentUser, setCurrentUser] = useState<{ id: string, name: string } | null>(null);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     // Initial load of topics
@@ -25,12 +28,21 @@ const ForumContent: React.FC = () => {
     // Check authentication status on component mount
     const checkInitialSession = async () => {
       try {
-        console.log('Initial session check...');
         const { data: { session } } = await supabase.auth.getSession();
-        console.log('Initial session result:', !!session?.user);
-        setIsLoggedIn(!!session?.user);
+        if (session?.user) {
+          setIsLoggedIn(true);
+          setCurrentUser({
+            id: session.user.id,
+            name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User'
+          });
+        }
       } catch (error) {
         console.error('Error checking initial session:', error);
+        toast({
+          title: "Authentication Error",
+          description: "Could not verify user session",
+          variant: "destructive"
+        });
       } finally {
         setIsAuthChecked(true);
       }
@@ -40,8 +52,16 @@ const ForumContent: React.FC = () => {
 
     // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, !!session?.user);
-      setIsLoggedIn(!!session?.user);
+      if (session?.user) {
+        setIsLoggedIn(true);
+        setCurrentUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User'
+        });
+      } else {
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+      }
     });
 
     // Clean up the subscription when the component unmounts
@@ -58,6 +78,11 @@ const ForumContent: React.FC = () => {
 
     if (error) {
       console.error('Error loading topics:', error);
+      toast({
+        title: "Error",
+        description: "Could not load forum topics",
+        variant: "destructive"
+      });
       return;
     }
 
@@ -73,7 +98,7 @@ const ForumContent: React.FC = () => {
           schema: 'public',
           table: 'forum_topics'
         }, 
-        (payload) => {
+        () => {
           loadTopics();
         }
       )
