@@ -3,21 +3,20 @@ export interface Topic {
   id: string;
   title: string;
   content: string;
-  author: string;
-  authorId: string;
+  author_id: string;
+  author_name: string;
   category: 'research' | 'discussion' | 'support' | 'news';
-  createdAt: string;
-  lastActivity: string;
-  replies: number;
-  views: number;
+  created_at: string;
+  last_activity: string;
+  replies_count: number;
+  views_count: number;
 }
 
-export interface Post {
+export interface Reply {
   id: string;
-  topicId: string;
+  topic_id: string;
   content: string;
-  author: string;
-  authorId: string;
-  createdAt: string;
-  isAnswer?: boolean;
+  author_id: string;
+  author_name: string;
+  created_at: string;
 }

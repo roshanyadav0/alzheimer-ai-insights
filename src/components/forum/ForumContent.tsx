@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Plus, Users } from 'lucide-react';
+import { MessageSquare, Plus } from 'lucide-react';
 import TopicList from './TopicList';
 import CreateTopicDialog from './CreateTopicDialog';
 import { Topic } from '@/types/forum';
+import { supabase } from '@/integrations/supabase/client';
 
 const ForumContent: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -16,65 +17,53 @@ const ForumContent: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is logged in
-    const user = localStorage.getItem('user');
-    setIsLoggedIn(!!user);
-
-    // Load topics from localStorage
-    const storedTopics = localStorage.getItem('forumTopics');
-    if (storedTopics) {
-      setTopics(JSON.parse(storedTopics));
-    } else {
-      // Set some sample topics if none exist
-      const sampleTopics: Topic[] = [
-        {
-          id: '1',
-          title: 'Latest advancements in Alzheimer\'s detection using AI',
-          author: 'Dr. Smith',
-          authorId: 'admin',
-          category: 'research',
-          createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-          replies: 12,
-          views: 145,
-          content: 'I\'d like to discuss the recent paper on using convolutional neural networks for early Alzheimer\'s detection through brain imaging. Has anyone implemented similar models?',
-          lastActivity: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: '2',
-          title: 'Genetic markers and their role in predicting Alzheimer\'s risk',
-          author: 'ResearcherX',
-          authorId: 'researcher1',
-          category: 'discussion',
-          createdAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
-          replies: 8,
-          views: 94,
-          content: 'Recent studies have identified several genetic markers strongly associated with Alzheimer\'s risk. Let\'s discuss how these findings could be integrated into our predictive models.',
-          lastActivity: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: '3',
-          title: 'Patient experiences with early intervention programs',
-          author: 'CaregiverSupport',
-          authorId: 'caregiver1',
-          category: 'support',
-          createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-          replies: 15,
-          views: 203,
-          content: 'I\'m interested in hearing about experiences with early intervention programs following an Alzheimer\'s diagnosis. What approaches have shown the most promise for quality of life improvements?',
-          lastActivity: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString()
-        }
-      ];
-      
-      setTopics(sampleTopics);
-      localStorage.setItem('forumTopics', JSON.stringify(sampleTopics));
-    }
+    loadTopics();
+    setupRealtimeSubscription();
+    checkUser();
   }, []);
 
-  const handleCreateTopic = (newTopic: Topic) => {
-    const updatedTopics = [newTopic, ...topics];
-    setTopics(updatedTopics);
-    localStorage.setItem('forumTopics', JSON.stringify(updatedTopics));
+  const checkUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    setIsLoggedIn(!!user);
+  };
+
+  const loadTopics = async () => {
+    const { data, error } = await supabase
+      .from('forum_topics')
+      .select('*')
+      .order('last_activity', { ascending: false });
+
+    if (error) {
+      console.error('Error loading topics:', error);
+      return;
+    }
+
+    setTopics(data || []);
+  };
+
+  const setupRealtimeSubscription = () => {
+    const channel = supabase
+      .channel('forum_topics_changes')
+      .on('postgres_changes', 
+        {
+          event: '*',
+          schema: 'public',
+          table: 'forum_topics'
+        }, 
+        (payload) => {
+          loadTopics();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
+
+  const handleCreateTopic = async (newTopic: Topic) => {
     setIsDialogOpen(false);
+    await loadTopics();
   };
 
   const handleLoginPrompt = () => {
@@ -111,7 +100,7 @@ const ForumContent: React.FC = () => {
               All Topics
             </TabsTrigger>
             <TabsTrigger value="research" className="flex items-center gap-2">
-              <Users size={16} />
+              <MessageSquare size={16} />
               Research Discussions
             </TabsTrigger>
           </TabsList>

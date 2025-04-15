@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Topic } from '@/types/forum';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface CreateTopicDialogProps {
   open: boolean;
@@ -23,23 +24,35 @@ const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState<'research' | 'discussion' | 'support' | 'news'>('discussion');
-  const [username, setUsername] = useState('');
-  const [userId, setUserId] = useState('');
+  const [user, setUser] = useState<{ id: string; email: string; name?: string } | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
-    // Get user info from localStorage
-    const userString = localStorage.getItem('user');
-    if (userString) {
-      const user = JSON.parse(userString);
-      setUsername(user.name || user.email.split('@')[0]);
-      setUserId(user.email);
-    }
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUser({
+          id: user.id,
+          email: user.email || '',
+          name: user.user_metadata?.name || user.email?.split('@')[0] || 'Anonymous'
+        });
+      }
+    };
+    getUser();
   }, [open]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (!user) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to create a topic",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (!title.trim()) {
       toast({
         title: "Error",
@@ -58,26 +71,36 @@ const CreateTopicDialog: React.FC<CreateTopicDialogProps> = ({
       return;
     }
 
-    const newTopic: Topic = {
-      id: Date.now().toString(),
-      title: title.trim(),
-      content: content.trim(),
-      author: username,
-      authorId: userId,
-      category: category,
-      createdAt: new Date().toISOString(),
-      lastActivity: new Date().toISOString(),
-      replies: 0,
-      views: 0
-    };
+    try {
+      const { data, error } = await supabase
+        .from('forum_topics')
+        .insert({
+          title: title.trim(),
+          content: content.trim(),
+          author_id: user.id,
+          author_name: user.name,
+          category: category,
+        })
+        .select()
+        .single();
 
-    onCreateTopic(newTopic);
-    resetForm();
-    
-    toast({
-      title: "Success",
-      description: "Your topic has been created",
-    });
+      if (error) throw error;
+
+      if (data) {
+        onCreateTopic(data as Topic);
+        resetForm();
+        toast({
+          title: "Success",
+          description: "Your topic has been created",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create topic. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const resetForm = () => {
