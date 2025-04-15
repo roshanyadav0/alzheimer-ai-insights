@@ -17,23 +17,32 @@ const ForumContent: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Initial load of topics and authentication check
     loadTopics();
     setupRealtimeSubscription();
     checkUser();
 
     // Listen for authentication state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event, !!session?.user);
       setIsLoggedIn(!!session?.user);
     });
 
+    // Clean up the subscription when the component unmounts
     return () => {
       subscription.unsubscribe();
     };
   }, []);
 
   const checkUser = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    setIsLoggedIn(!!session?.user);
+    try {
+      console.log('Checking user session...');
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log('Session data:', !!session?.user);
+      setIsLoggedIn(!!session?.user);
+    } catch (error) {
+      console.error('Error checking user:', error);
+    }
   };
 
   const loadTopics = async () => {
@@ -78,6 +87,9 @@ const ForumContent: React.FC = () => {
   const handleLoginPrompt = () => {
     navigate('/login', { state: { returnTo: '/forum' } });
   };
+
+  // Debug rendering to help troubleshoot
+  console.log('Rendering ForumContent, isLoggedIn:', isLoggedIn);
 
   return (
     <div className="container mx-auto max-w-6xl">
@@ -134,3 +146,4 @@ const ForumContent: React.FC = () => {
 };
 
 export default ForumContent;
+
