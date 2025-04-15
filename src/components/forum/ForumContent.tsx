@@ -20,11 +20,20 @@ const ForumContent: React.FC = () => {
     loadTopics();
     setupRealtimeSubscription();
     checkUser();
+
+    // Listen for authentication state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setIsLoggedIn(!!session?.user);
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const checkUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    setIsLoggedIn(!!user);
+    const { data: { session } } = await supabase.auth.getSession();
+    setIsLoggedIn(!!session?.user);
   };
 
   const loadTopics = async () => {
