@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Plus } from 'lucide-react';
+import { MessageSquare, Plus, Send } from 'lucide-react';
 import TopicList from './TopicList';
 import CreateTopicDialog from './CreateTopicDialog';
 import { Topic } from '@/types/forum';
@@ -17,6 +17,7 @@ const ForumContent: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [currentUser, setCurrentUser] = useState<{ id: string, name: string } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -72,6 +73,7 @@ const ForumContent: React.FC = () => {
   }, []);
 
   const loadTopics = async () => {
+    setIsLoading(true);
     const { data, error } = await supabase
       .from('forum_topics')
       .select('*')
@@ -88,6 +90,7 @@ const ForumContent: React.FC = () => {
     }
 
     setTopics(data as Topic[] || []);
+    setIsLoading(false);
   };
 
   const setupRealtimeSubscription = () => {
@@ -133,12 +136,13 @@ const ForumContent: React.FC = () => {
           <Button 
             onClick={() => setIsDialogOpen(true)} 
             className="bg-alzheimer-primary hover:bg-alzheimer-accent text-white"
+            size="lg"
           >
             <Plus size={18} className="mr-2" />
-            New Topic
+            Create New Topic
           </Button>
         ) : (
-          <Button onClick={handleLoginPrompt}>
+          <Button onClick={handleLoginPrompt} size="lg">
             Log in to participate
           </Button>
         )}
@@ -158,13 +162,68 @@ const ForumContent: React.FC = () => {
           </TabsList>
 
           <TabsContent value="all">
-            <TopicList topics={topics} />
+            {isLoading ? (
+              <div className="text-center py-10">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-alzheimer-primary mx-auto"></div>
+                <p className="mt-4 text-gray-500">Loading topics...</p>
+              </div>
+            ) : topics.length > 0 ? (
+              <TopicList topics={topics} />
+            ) : (
+              <div className="text-center py-10">
+                <MessageSquare size={48} className="mx-auto text-gray-300 mb-4" />
+                <p className="text-lg text-gray-500">No topics yet</p>
+                {isLoggedIn && (
+                  <Button 
+                    onClick={() => setIsDialogOpen(true)} 
+                    className="mt-4 bg-alzheimer-primary hover:bg-alzheimer-accent text-white"
+                  >
+                    <Send size={16} className="mr-2" />
+                    Start the conversation
+                  </Button>
+                )}
+              </div>
+            )}
           </TabsContent>
           
           <TabsContent value="research">
-            <TopicList topics={topics.filter(topic => topic.category === 'research')} />
+            {isLoading ? (
+              <div className="text-center py-10">
+                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-alzheimer-primary mx-auto"></div>
+                <p className="mt-4 text-gray-500">Loading topics...</p>
+              </div>
+            ) : topics.filter(topic => topic.category === 'research').length > 0 ? (
+              <TopicList topics={topics.filter(topic => topic.category === 'research')} />
+            ) : (
+              <div className="text-center py-10">
+                <MessageSquare size={48} className="mx-auto text-gray-300 mb-4" />
+                <p className="text-lg text-gray-500">No research topics yet</p>
+                {isLoggedIn && (
+                  <Button 
+                    onClick={() => setIsDialogOpen(true)} 
+                    className="mt-4 bg-alzheimer-primary hover:bg-alzheimer-accent text-white"
+                  >
+                    <Send size={16} className="mr-2" />
+                    Start a research discussion
+                  </Button>
+                )}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
+
+        {isLoggedIn && (
+          <div className="mt-8 flex justify-center">
+            <Button 
+              onClick={() => setIsDialogOpen(true)} 
+              className="bg-alzheimer-primary hover:bg-alzheimer-accent text-white"
+              size="lg"
+            >
+              <Plus size={18} className="mr-2" />
+              Create New Topic
+            </Button>
+          </div>
+        )}
       </Card>
 
       <CreateTopicDialog 
