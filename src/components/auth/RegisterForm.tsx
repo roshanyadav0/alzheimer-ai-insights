@@ -26,20 +26,13 @@ const RegisterForm = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   
-  // Predefined test user details
-  const testUserDetails = {
-    name: 'Research Contributor',
-    email: 'researcher@alzinsight.com',
-    password: 'ResearchData2024!',
-  };
-  
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: testUserDetails.name,
-      email: testUserDetails.email,
-      password: testUserDetails.password,
-      confirmPassword: testUserDetails.password,
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
   });
 
@@ -55,9 +48,6 @@ const RegisterForm = () => {
         options: {
           data: {
             name: data.name,
-            bio: 'Alzheimer\'s research enthusiast with a passion for community-driven insights.',
-            researchExperience: 'Contributed to multiple AI-driven Alzheimer\'s detection research projects.',
-            interests: ['Machine Learning', 'Neuroscience', 'Early Detection Techniques']
           }
         }
       });

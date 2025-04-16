@@ -22,20 +22,14 @@ const LoginForm = () => {
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   
-  // Predefined test user credentials
-  const testUserCredentials = {
-    email: 'researcher@alzinsight.com',
-    password: 'ResearchData2024!',
-  };
-  
   // Get the return URL from location state, or default to profile
   const returnTo = location.state?.returnTo || '/profile';
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: testUserCredentials.email,
-      password: testUserCredentials.password,
+      email: '',
+      password: '',
     },
   });
 
