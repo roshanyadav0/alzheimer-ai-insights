@@ -52,6 +52,7 @@ const ForumContent: React.FC = () => {
 
     // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Navbar: Auth state changed:', event);
       if (session?.user) {
         setIsLoggedIn(true);
         setCurrentUser({
@@ -109,7 +110,7 @@ const ForumContent: React.FC = () => {
     };
   };
 
-  const handleCreateTopic = async (newTopic: Topic) => {
+  const handleCreateTopic = async () => {
     setIsDialogOpen(false);
     await loadTopics();
   };
