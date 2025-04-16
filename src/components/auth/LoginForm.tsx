@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { supabase } from '@/integrations/supabase/client';
+import { AlertCircle } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -21,6 +22,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   
   // Get the return URL from location state, or default to profile
   const returnTo = location.state?.returnTo || '/profile';
@@ -36,6 +38,7 @@ const LoginForm = () => {
   const onSubmit = async (data: LoginFormValues) => {
     try {
       setIsLoading(true);
+      setAuthError(null);
       console.log('Login attempt with:', data);
       
       // Use Supabase auth
@@ -53,7 +56,10 @@ const LoginForm = () => {
       // Redirect to the return URL or profile page
       navigate(returnTo);
     } catch (error: any) {
-      toast.error(`Login failed: ${error.message || 'Please try again.'}`);
+      // Extract the specific error message
+      const errorMessage = error.message || 'Please try again.';
+      setAuthError(errorMessage);
+      toast.error(`Login failed: ${errorMessage}`);
       console.error('Login error:', error);
     } finally {
       setIsLoading(false);
@@ -66,6 +72,16 @@ const LoginForm = () => {
         <h1 className="text-2xl font-bold text-alzheimer-dark">Login to AlzInsight</h1>
         <p className="text-gray-500 mt-2">Access your account and contribute to Alzheimer's research</p>
       </div>
+      
+      {authError && (
+        <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 mb-4 flex items-start">
+          <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-medium">{authError}</p>
+            <p className="text-xs mt-1">Note: You need to register first if you don't have an account.</p>
+          </div>
+        </div>
+      )}
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -114,6 +130,12 @@ const LoginForm = () => {
             Register
           </Link>
         </p>
+        
+        <div className="mt-4 pt-4 border-t text-xs text-gray-500">
+          <p>Try using a valid email format with a real domain, like:</p>
+          <code className="block mt-1 p-1 bg-gray-100 rounded">example@gmail.com</code>
+          <code className="block mt-1 p-1 bg-gray-100 rounded">your.name@outlook.com</code>
+        </div>
       </div>
     </div>
   );

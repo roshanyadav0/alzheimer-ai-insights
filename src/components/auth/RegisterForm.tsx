@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { supabase } from '@/integrations/supabase/client';
+import { AlertCircle } from 'lucide-react';
 
 const registerSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
@@ -25,6 +26,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 const RegisterForm = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -39,6 +41,7 @@ const RegisterForm = () => {
   const onSubmit = async (data: RegisterFormValues) => {
     try {
       setIsLoading(true);
+      setAuthError(null);
       console.log('Registration with:', data);
       
       // Use Supabase auth for registration
@@ -61,7 +64,10 @@ const RegisterForm = () => {
       // Redirect to profile
       navigate('/profile');
     } catch (error: any) {
-      toast.error(`Registration failed: ${error.message || 'Please try again.'}`);
+      // Extract the specific error message
+      const errorMessage = error.message || 'Please try again.';
+      setAuthError(errorMessage);
+      toast.error(`Registration failed: ${errorMessage}`);
       console.error('Registration error:', error);
     } finally {
       setIsLoading(false);
@@ -74,6 +80,18 @@ const RegisterForm = () => {
         <h1 className="text-2xl font-bold text-alzheimer-dark">Join AlzInsight</h1>
         <p className="text-gray-500 mt-2">Create an account to access all features</p>
       </div>
+      
+      {authError && (
+        <div className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 mb-4 flex items-start">
+          <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+          <div>
+            <p className="text-sm font-medium">{authError}</p>
+            {authError.includes("invalid") && (
+              <p className="text-xs mt-1">Please use a valid email format with a real domain (like gmail.com or outlook.com)</p>
+            )}
+          </div>
+        </div>
+      )}
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -101,6 +119,7 @@ const RegisterForm = () => {
                   <Input placeholder="name@example.com" {...field} />
                 </FormControl>
                 <FormMessage />
+                <p className="text-xs text-gray-500 mt-1">Use a valid email format with a real domain (gmail.com, outlook.com, etc.)</p>
               </FormItem>
             )}
           />
@@ -150,6 +169,13 @@ const RegisterForm = () => {
             Login
           </Link>
         </p>
+        
+        <div className="mt-4 pt-4 border-t text-xs text-gray-500">
+          <p>Examples of valid email formats:</p>
+          <code className="block mt-1 p-1 bg-gray-100 rounded">yourname@gmail.com</code>
+          <code className="block mt-1 p-1 bg-gray-100 rounded">your.name@outlook.com</code>
+          <code className="block mt-1 p-1 bg-gray-100 rounded">user@company.com</code>
+        </div>
       </div>
     </div>
   );
