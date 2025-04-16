@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { supabase } from '@/integrations/supabase/client';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -18,6 +19,11 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
+  
+  // Get the return URL from location state, or default to profile
+  const returnTo = location.state?.returnTo || '/profile';
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -29,24 +35,28 @@ const LoginForm = () => {
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      // In a real implementation, this would connect to your backend
+      setIsLoading(true);
       console.log('Login attempt with:', data);
       
-      // Simulate login success
+      // Use Supabase auth
+      const { error } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
       toast.success('Login successful!');
       
-      // Store user info in localStorage (in a real app, you'd use a token)
-      localStorage.setItem('user', JSON.stringify({
-        id: 'user-123',
-        email: data.email,
-        name: data.email.split('@')[0],
-      }));
-      
-      // Redirect to profile
-      navigate('/profile');
-    } catch (error) {
-      toast.error('Login failed. Please try again.');
+      // Redirect to the return URL or profile page
+      navigate(returnTo);
+    } catch (error: any) {
+      toast.error(`Login failed: ${error.message || 'Please try again.'}`);
       console.error('Login error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -87,8 +97,12 @@ const LoginForm = () => {
             )}
           />
           
-          <Button type="submit" className="w-full bg-alzheimer-primary hover:bg-alzheimer-accent">
-            Login
+          <Button 
+            type="submit" 
+            className="w-full bg-alzheimer-primary hover:bg-alzheimer-accent"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Logging in...' : 'Login'}
           </Button>
         </form>
       </Form>

@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UserData {
   id: string;
@@ -34,67 +35,117 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 const UserProfile = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<UserData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    // Check if user is logged in
-    const userData = localStorage.getItem('user');
-    if (!userData) {
-      toast.error('Please login to view your profile');
-      navigate('/login');
-      return;
-    }
+    // Check if user is logged in with Supabase
+    const checkAuthStatus = async () => {
+      try {
+        setIsLoading(true);
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session?.user) {
+          toast.error('Please login to view your profile');
+          navigate('/login', { state: { returnTo: '/profile' } });
+          return;
+        }
+        
+        // Get user data from session
+        const userData: UserData = {
+          id: session.user.id,
+          name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'User',
+          email: session.user.email || '',
+          bio: session.user.user_metadata?.bio || '',
+          researchExperience: session.user.user_metadata?.researchExperience || '',
+        };
+        
+        setUser(userData);
+        form.reset({
+          name: userData.name,
+          email: userData.email,
+          bio: userData.bio || '',
+          researchExperience: userData.researchExperience || '',
+        });
+      } catch (error) {
+        console.error('Error checking auth status:', error);
+        toast.error('Error loading profile');
+      } finally {
+        setIsLoading(false);
+      }
+    };
     
-    // Parse user data
-    setUser(JSON.parse(userData));
+    checkAuthStatus();
   }, [navigate]);
   
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      name: user?.name || '',
-      email: user?.email || '',
-      bio: user?.bio || '',
-      researchExperience: user?.researchExperience || '',
+      name: '',
+      email: '',
+      bio: '',
+      researchExperience: '',
     },
   });
   
-  // Update form when user data is loaded
-  useEffect(() => {
-    if (user) {
-      form.reset({
-        name: user.name,
-        email: user.email,
-        bio: user.bio || '',
-        researchExperience: user.researchExperience || '',
-      });
-    }
-  }, [user, form]);
-
-  const onSubmit = (data: ProfileFormValues) => {
+  const onSubmit = async (data: ProfileFormValues) => {
     try {
-      // In a real implementation, this would connect to your backend
-      console.log('Profile update:', data);
+      if (!user) return;
       
-      // Update local storage
-      const updatedUser = { ...user, ...data };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      setUser(updatedUser);
+      // Update user metadata in Supabase
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          name: data.name,
+          bio: data.bio,
+          researchExperience: data.researchExperience,
+        }
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Update local state
+      setUser({
+        ...user,
+        name: data.name,
+        bio: data.bio || '',
+        researchExperience: data.researchExperience || '',
+      });
       
       toast.success('Profile updated successfully!');
-    } catch (error) {
-      toast.error('Failed to update profile.');
+    } catch (error: any) {
+      toast.error(`Failed to update profile: ${error.message || 'Please try again'}`);
       console.error('Profile update error:', error);
     }
   };
   
-  const handleLogout = () => {
-    localStorage.removeItem('user');
-    toast.success('Logged out successfully');
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast.success('Logged out successfully');
+      navigate('/');
+    } catch (error: any) {
+      toast.error(`Logout failed: ${error.message || 'Please try again'}`);
+      console.error('Logout error:', error);
+    }
   };
   
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-96">
+      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-alzheimer-primary"></div>
+      <p className="ml-3">Loading profile...</p>
+    </div>;
+  }
+
   if (!user) {
-    return <div className="flex justify-center items-center h-96">Loading profile...</div>;
+    return <div className="flex justify-center items-center h-96">
+      <p>Please login to view your profile</p>
+    </div>;
   }
 
   return (
@@ -153,7 +204,7 @@ const UserProfile = () => {
                           <FormItem>
                             <FormLabel>Email</FormLabel>
                             <FormControl>
-                              <Input {...field} />
+                              <Input {...field} disabled />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

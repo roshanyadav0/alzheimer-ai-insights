@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { supabase } from '@/integrations/supabase/client';
 
 const registerSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
@@ -23,6 +24,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const RegisterForm = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -36,24 +38,33 @@ const RegisterForm = () => {
 
   const onSubmit = async (data: RegisterFormValues) => {
     try {
-      // In a real implementation, this would connect to your backend
+      setIsLoading(true);
       console.log('Registration with:', data);
       
-      // Simulate registration success
-      toast.success('Registration successful!');
-      
-      // Store user info in localStorage (in a real app, you'd use a token)
-      localStorage.setItem('user', JSON.stringify({
-        id: 'user-' + Date.now(),
-        name: data.name,
+      // Use Supabase auth for registration
+      const { error } = await supabase.auth.signUp({
         email: data.email,
-      }));
+        password: data.password,
+        options: {
+          data: {
+            name: data.name,
+          }
+        }
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast.success('Registration successful! You are now logged in.');
       
       // Redirect to profile
       navigate('/profile');
-    } catch (error) {
-      toast.error('Registration failed. Please try again.');
+    } catch (error: any) {
+      toast.error(`Registration failed: ${error.message || 'Please try again.'}`);
       console.error('Registration error:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -122,8 +133,12 @@ const RegisterForm = () => {
             )}
           />
           
-          <Button type="submit" className="w-full bg-alzheimer-primary hover:bg-alzheimer-accent">
-            Create Account
+          <Button 
+            type="submit" 
+            className="w-full bg-alzheimer-primary hover:bg-alzheimer-accent"
+            disabled={isLoading}
+          >
+            {isLoading ? 'Creating Account...' : 'Create Account'}
           </Button>
         </form>
       </Form>
