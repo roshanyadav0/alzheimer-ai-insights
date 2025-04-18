@@ -3,6 +3,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import BrainVisualization from '../visualizations/BrainVisualization';
+import AIChat from '../chat/AIChat';
 
 const Hero = () => {
   return (
@@ -32,14 +34,13 @@ const Hero = () => {
           </div>
           <div className="md:w-1/2 flex justify-center md:justify-end">
             <div className="relative w-full max-w-md">
-              <div className="absolute inset-0 bg-gradient-to-r from-alzheimer-primary/20 to-alzheimer-secondary/20 rounded-2xl transform -rotate-3"></div>
-              <img 
-                src="https://images.unsplash.com/photo-1584516297137-79a913e6322a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                alt="Brain scan visualization" 
-                className="relative z-10 rounded-2xl shadow-xl w-full object-cover h-64 sm:h-80 md:h-96 transform rotate-3"
-              />
+              <BrainVisualization />
             </div>
           </div>
+        </div>
+        
+        <div className="pb-16">
+          <AIChat />
         </div>
       </div>
       <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-white to-transparent"></div>
