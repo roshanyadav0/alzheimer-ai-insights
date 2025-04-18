@@ -9,6 +9,7 @@ import About from "./pages/About";
 import Research from "./pages/Research";
 import Assessment from "./pages/Assessment";
 import News from "./pages/News";
+import NewsDetail from "./pages/NewsDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
@@ -29,6 +30,7 @@ const App = () => (
           <Route path="/research" element={<Research />} />
           <Route path="/assessment" element={<Assessment />} />
           <Route path="/news" element={<News />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />

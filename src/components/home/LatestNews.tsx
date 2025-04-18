@@ -1,12 +1,23 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+interface NewsItem {
+  id: number;
+  title: string;
+  date: string;
+  excerpt: string;
+  category: string;
+  image: string;
+}
+
 const LatestNews = () => {
-  const news = [
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  
+  const news: NewsItem[] = [
     {
       id: 1,
       title: "New AI Algorithm Detects Alzheimer's 10 Years Before Symptoms Appear",
@@ -41,6 +52,13 @@ const LatestNews = () => {
     }
   ];
 
+  const categories = Array.from(new Set(news.map(item => item.category)));
+  
+  // Filter news based on active category
+  const filteredNews = activeCategory 
+    ? news.filter(item => item.category === activeCategory) 
+    : news;
+  
   return (
     <div className="py-16 bg-white">
       <div className="section-container">
@@ -57,9 +75,34 @@ const LatestNews = () => {
             </Link>
           </Button>
         </div>
+        
+        {/* Category filters */}
+        <div className="mb-8">
+          <div className="flex flex-wrap gap-2">
+            <Button 
+              variant={activeCategory === null ? "default" : "outline"}
+              size="sm"
+              className={activeCategory === null ? "bg-alzheimer-primary hover:bg-alzheimer-accent" : ""}
+              onClick={() => setActiveCategory(null)}
+            >
+              All
+            </Button>
+            {categories.map((category, index) => (
+              <Button 
+                key={index}
+                variant={activeCategory === category ? "default" : "outline"}
+                size="sm"
+                className={activeCategory === category ? "bg-alzheimer-primary hover:bg-alzheimer-accent" : ""}
+                onClick={() => setActiveCategory(category)}
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
+        </div>
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {news.map((item) => (
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {filteredNews.map((item) => (
             <Card key={item.id} className="border border-gray-200 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow duration-300">
               <div className="h-40 overflow-hidden">
                 <img 
