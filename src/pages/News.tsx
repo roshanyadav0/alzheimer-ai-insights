@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -7,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, ArrowRight, BookOpen, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
+import NewsletterForm from '@/components/news/NewsletterForm';
 
 // Define news article interface
 interface NewsArticle {
@@ -379,16 +379,7 @@ const News = () => {
                   <p className="text-gray-600 mb-6">
                     Subscribe to our newsletter to receive the latest news and research updates on Alzheimer's detection and AI advancements
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
-                    <input 
-                      type="email" 
-                      placeholder="Enter your email" 
-                      className="px-4 py-2 border border-gray-300 rounded-md flex-grow focus:outline-none focus:ring-2 focus:ring-alzheimer-primary"
-                    />
-                    <Button className="bg-alzheimer-primary hover:bg-alzheimer-accent whitespace-nowrap">
-                      Subscribe
-                    </Button>
-                  </div>
+                  <NewsletterForm />
                 </div>
               </div>
             </div>
