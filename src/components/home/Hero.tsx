@@ -1,10 +1,9 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Bot } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import BrainVisualization from '../visualizations/BrainVisualization';
-import AIChat from '../chat/AIChat';
 
 const Hero = () => {
   return (
@@ -30,6 +29,11 @@ const Hero = () => {
                   Explore Research <ArrowRight size={16} className="ml-2" />
                 </Link>
               </Button>
+              <Button asChild variant="outline" className="border-alzheimer-primary text-alzheimer-primary hover:bg-alzheimer-tertiary">
+                <Link to="/ai-assistant" className="flex items-center">
+                  Ask AI Assistant <Bot size={16} className="ml-2" />
+                </Link>
+              </Button>
             </div>
           </div>
           <div className="md:w-1/2 flex justify-center md:justify-end">
@@ -37,10 +41,6 @@ const Hero = () => {
               <BrainVisualization />
             </div>
           </div>
-        </div>
-        
-        <div className="pb-16">
-          <AIChat />
         </div>
       </div>
       <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-t from-white to-transparent"></div>

@@ -15,6 +15,7 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import Forum from "./pages/Forum";
 import NotFound from "./pages/NotFound";
+import AIAssistant from "./pages/AIAssistant";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/forum" element={<Forum />} />
+          <Route path="/ai-assistant" element={<AIAssistant />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
