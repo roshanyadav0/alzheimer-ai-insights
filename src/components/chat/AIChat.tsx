@@ -3,8 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Bot, SendHorizontal } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const AIChat = () => {
   const [message, setMessage] = useState('');
@@ -32,29 +33,16 @@ const AIChat = () => {
     setChatHistory(prev => [...prev, { role: 'user', content: userMessage }]);
 
     try {
-      // Simulate AI response - In a real app, this would be an API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Generate a response based on the user's query
-      let aiResponse = "";
-      const query = userMessage.toLowerCase();
-      
-      if (query.includes("what is alzheimer")) {
-        aiResponse = "Alzheimer's disease is a progressive neurologic disorder that causes the brain to shrink (atrophy) and brain cells to die. It's the most common cause of dementia — a continuous decline in thinking, behavioral and social skills that affects a person's ability to function independently.";
-      } else if (query.includes("symptom")) {
-        aiResponse = "Early symptoms of Alzheimer's disease include memory problems, particularly remembering recent events, confusion, disorientation, trouble with speech, difficulty performing familiar tasks, and changes in personality or mood.";
-      } else if (query.includes("treatment") || query.includes("cure")) {
-        aiResponse = "While there's no cure for Alzheimer's disease yet, several medications can help manage symptoms. These include cholinesterase inhibitors like donepezil, rivastigmine, and galantamine, and memantine. Researchers are actively working on developing more effective treatments.";
-      } else if (query.includes("prevention") || query.includes("reduce risk")) {
-        aiResponse = "You may help reduce your risk of Alzheimer's by exercising regularly, eating a diet rich in fruits and vegetables, maintaining social connections, keeping your mind active, managing cardiovascular health, and getting quality sleep.";
-      } else if (query.includes("research") || query.includes("study")) {
-        aiResponse = "Current Alzheimer's research focuses on early detection through biomarkers, understanding genetic risk factors, exploring the role of inflammation and the immune system, investigating tau and amyloid proteins, and testing potential new treatments including immunotherapies.";
-      } else {
-        aiResponse = "I'm an AI assistant specialized in Alzheimer's research. I can help answer questions about symptoms, diagnosis, treatments, prevention strategies, and current research. Could you please provide more specific details about what you'd like to know?";
-      }
-      
+      const { data, error } = await supabase.functions.invoke('chat-with-gemini', {
+        body: { message: userMessage }
+      });
+
+      if (error) throw error;
+
+      const aiResponse = data.response;
       setChatHistory(prev => [...prev, { role: 'assistant', content: aiResponse }]);
     } catch (error) {
+      console.error('Error:', error);
       toast({
         title: "Error",
         description: "Failed to get response. Please try again.",
@@ -123,10 +111,6 @@ const AIChat = () => {
               <SendHorizontal className="w-4 h-4" />
             </Button>
           </form>
-          <p className="text-xs text-gray-500 text-center">
-            This is a simulated AI assistant. In a production environment, 
-            this would be connected to a real AI service.
-          </p>
         </div>
       </CardContent>
     </Card>
