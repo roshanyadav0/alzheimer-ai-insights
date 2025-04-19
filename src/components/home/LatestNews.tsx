@@ -1,12 +1,13 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, ArrowRight } from 'lucide-react';
+import { Calendar, ArrowRight, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface NewsItem {
-  id: number;
+  id: string;
   title: string;
   date: string;
   excerpt: string;
@@ -16,41 +17,33 @@ interface NewsItem {
 
 const LatestNews = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
   
-  const news: NewsItem[] = [
-    {
-      id: 1,
-      title: "New AI Algorithm Detects Alzheimer's 10 Years Before Symptoms Appear",
-      date: "April 2, 2025",
-      excerpt: "Researchers at Stanford University have developed a new AI system that can detect early signs of Alzheimer's disease up to a decade before symptoms appear.",
-      category: "Research",
-      image: "https://images.unsplash.com/photo-1563213126-a4273aed2016?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      id: 2,
-      title: "Blood Test for Alzheimer's Shows Promising Results in Large Trial",
-      date: "March 28, 2025",
-      excerpt: "A new blood test that detects biomarkers associated with Alzheimer's disease has shown 94% accuracy in a clinical trial with over 1,500 participants.",
-      category: "Clinical Trials",
-      image: "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      id: 3,
-      title: "International Consortium Launches $100M Funding for AI in Dementia Research",
-      date: "March 15, 2025",
-      excerpt: "A global initiative bringing together researchers, technology companies, and healthcare providers has announced major funding for AI applications in dementia research.",
-      category: "Funding",
-      image: "https://images.unsplash.com/photo-1579154341098-e4e158cc7f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      id: 4,
-      title: "Virtual Reality Shows Promise in Cognitive Assessment for Alzheimer's Patients",
-      date: "March 10, 2025",
-      excerpt: "New research shows that immersive virtual reality environments can provide more sensitive measures of spatial navigation deficits in early Alzheimer's disease.",
-      category: "Technology",
-      image: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  const fetchNews = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('fetch-news');
+      
+      if (error) throw error;
+      
+      setNews(data.news);
+    } catch (error) {
+      console.error('Error fetching news:', error);
+      toast({
+        title: "Error fetching news",
+        description: "Failed to load latest news. Using fallback data.",
+        variant: "destructive",
+      });
+      // Keep using the sample data as fallback
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
 
   const categories = Array.from(new Set(news.map(item => item.category)));
   
@@ -58,6 +51,21 @@ const LatestNews = () => {
   const filteredNews = activeCategory 
     ? news.filter(item => item.category === activeCategory) 
     : news;
+
+  if (isLoading) {
+    return (
+      <div className="py-16 bg-white">
+        <div className="section-container">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-center">
+              <Loader2 className="h-12 w-12 animate-spin text-alzheimer-primary mx-auto" />
+              <p className="mt-4 text-lg text-gray-600">Loading latest news...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   
   return (
     <div className="py-16 bg-white">
@@ -104,7 +112,7 @@ const LatestNews = () => {
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {filteredNews.map((item) => (
             <Card key={item.id} className="border border-gray-200 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow duration-300">
-              <div className="h-40 overflow-hidden">
+              <div className="h-48 overflow-hidden">
                 <img 
                   src={item.image} 
                   alt={item.title} 
