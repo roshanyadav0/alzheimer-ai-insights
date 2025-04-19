@@ -14,9 +14,17 @@ serve(async (req) => {
   }
 
   try {
+    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+    
+    if (!geminiApiKey) {
+      throw new Error('GEMINI_API_KEY is not set in environment variables');
+    }
+    
     const { message } = await req.json();
     
-    const genAI = new GoogleGenerativeAI(Deno.env.get('GEMINI_API_KEY')!);
+    console.log('Sending message to Gemini API:', message.substring(0, 50) + '...');
+    
+    const genAI = new GoogleGenerativeAI(geminiApiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const chat = model.startChat({
@@ -41,13 +49,18 @@ serve(async (req) => {
     const result = await chat.sendMessage(message);
     const response = await result.response;
     const text = response.text();
+    
+    console.log('Received response from Gemini API');
 
     return new Response(JSON.stringify({ response: text }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error('Error with Gemini API:', error);
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      response: "I'm sorry, I encountered an issue connecting to the Alzheimer's research knowledge base. Please try again in a moment." 
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

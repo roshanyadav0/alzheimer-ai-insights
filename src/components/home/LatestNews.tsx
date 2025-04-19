@@ -30,8 +30,23 @@ const LatestNews = () => {
 
   const fetchNews = async () => {
     try {
+      console.log('Fetching news via Supabase Edge Function...');
+      
       const { data, error } = await supabase.functions.invoke('fetch-news');
-      if (error) throw error;
+      
+      if (error) {
+        throw error;
+      }
+      
+      if (data.usingFallback) {
+        console.log('Using fallback data due to API issue:', data.error);
+        toast({
+          title: "Using sample news data",
+          description: "Could not connect to news service. Using fallback data instead.",
+          variant: "warning",
+        });
+      }
+      
       setNews(data.news);
     } catch (error) {
       console.error('Error fetching news:', error);
@@ -78,7 +93,7 @@ const LatestNews = () => {
         />
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {filteredNews.map((item) => (
+          {filteredNews.slice(0, 4).map((item) => (
             <NewsCard key={item.id} item={item} />
           ))}
         </div>
