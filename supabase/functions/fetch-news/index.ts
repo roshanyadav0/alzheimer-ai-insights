@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
 const corsHeaders = {
@@ -7,7 +6,6 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -21,13 +19,12 @@ serve(async (req) => {
     
     console.log('Fetching news from News API...');
     
-    // Fetch from News API with focus on Alzheimer's research
     const response = await fetch(
       'https://newsapi.org/v2/everything?' + new URLSearchParams({
         q: 'Alzheimer\'s research AI',
         sortBy: 'publishedAt',
         language: 'en',
-        pageSize: '12'
+        pageSize: '50'
       }), {
         headers: {
           'X-Api-Key': newsApiKey
@@ -44,10 +41,9 @@ serve(async (req) => {
       throw new Error(data.message || 'Failed to fetch news');
     }
 
-    // Transform the data to match our existing news structure
     const transformedNews = data.articles.map((article: any, index: number) => ({
       id: `${index + 1}`,
-      title: article.title,
+      title: article.title || 'Untitled',
       date: new Date(article.publishedAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
@@ -65,7 +61,6 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error fetching news:', error);
     
-    // Return fallback data in case of API failure
     const fallbackNews = getSampleNewsData();
     
     return new Response(JSON.stringify({ 
@@ -93,9 +88,8 @@ function determineCategory(title: string, description: string): string {
   return 'Research';
 }
 
-// Sample data for fallback
 function getSampleNewsData() {
-  return [
+  const baseNews = [
     {
       id: "1",
       title: "New AI Algorithm Detects Alzheimer's 10 Years Before Symptoms Appear",
@@ -133,4 +127,20 @@ function getSampleNewsData() {
       image: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     }
   ];
+
+  const extendedNews = [];
+  for (let i = 0; i < 50; i++) {
+    const baseItem = baseNews[i % baseNews.length];
+    extendedNews.push({
+      ...baseItem,
+      id: `${i + 1}`,
+      date: new Date(2025, 3, 20 - i).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    });
+  }
+
+  return extendedNews;
 }

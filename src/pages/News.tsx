@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -18,7 +17,6 @@ import {
   PaginationPrevious 
 } from '@/components/ui/pagination';
 
-// Define news article interface
 interface NewsArticle {
   id: string;
   title: string;
@@ -37,14 +35,13 @@ const News = () => {
   const [featuredNews, setFeaturedNews] = useState<NewsArticle | null>(null);
   const [activeCategory, setActiveCategory] = useState('All Categories');
   const [currentPage, setCurrentPage] = useState(1);
-  const articlesPerPage = 8;
+  const articlesPerPage = 10;
   
   const categories = [
     'All Categories', 'Research', 'Clinical Trials', 'Technology', 
     'Treatment', 'Policy', 'Funding', 'Prevention', 'Diagnostics'
   ];
   
-  // Fetch news data from API
   useEffect(() => {
     const fetchNews = async () => {
       setIsLoading(true);
@@ -66,10 +63,8 @@ const News = () => {
           });
         }
         
-        // Transform the API data to match our interface
         const newsItems = data.news;
         
-        // Set featured article to be the first one with an image
         const featured = newsItems.find(article => article.image) || newsItems[0];
         
         setFeaturedNews(featured);
@@ -82,7 +77,6 @@ const News = () => {
           variant: "destructive"
         });
         
-        // Fallback to sample data in case the API fails
         const sampleData = getSampleNewsData();
         setFeaturedNews(sampleData.featuredNews);
         setArticles(sampleData.newsItems);
@@ -94,27 +88,37 @@ const News = () => {
     fetchNews();
   }, [toast]);
   
-  // Filter articles by selected category
   const filteredArticles = activeCategory === 'All Categories' 
     ? articles 
     : articles.filter(article => article.category === activeCategory);
 
-  // Handle category selection
   const handleCategoryClick = (category: string) => {
     setActiveCategory(category);
     setCurrentPage(1);
   };
 
-  // Calculate pagination
   const indexOfLastArticle = currentPage * articlesPerPage;
   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
   const currentArticles = filteredArticles.slice(indexOfFirstArticle, indexOfLastArticle);
   const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
 
-  // Change page
+  const pageNumbers = [];
+  if (totalPages <= 5) {
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(i);
+    }
+  } else {
+    if (currentPage <= 3) {
+      pageNumbers.push(1, 2, 3, 4, 5, '...', totalPages);
+    } else if (currentPage >= totalPages - 2) {
+      pageNumbers.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+    } else {
+      pageNumbers.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+    }
+  }
+
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   
-  // Sample data for fallback
   const getSampleNewsData = () => {
     return {
       featuredNews: {
@@ -202,27 +206,10 @@ const News = () => {
     };
   };
 
-  // Generate page numbers for pagination
-  const pageNumbers = [];
-  if (totalPages <= 5) {
-    for (let i = 1; i <= totalPages; i++) {
-      pageNumbers.push(i);
-    }
-  } else {
-    if (currentPage <= 3) {
-      pageNumbers.push(1, 2, 3, 4, 5, '...', totalPages);
-    } else if (currentPage >= totalPages - 2) {
-      pageNumbers.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
-    } else {
-      pageNumbers.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
-    }
-  }
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <main className="flex-grow">
-        {/* Hero Section */}
         <div className="bg-alzheimer-tertiary">
           <div className="section-container py-16">
             <div className="max-w-3xl">
@@ -234,7 +221,6 @@ const News = () => {
           </div>
         </div>
 
-        {/* Loading state */}
         {isLoading ? (
           <div className="section-container py-12 flex justify-center items-center">
             <div className="text-center">
@@ -244,7 +230,6 @@ const News = () => {
           </div>
         ) : (
           <>
-            {/* Featured Article */}
             {featuredNews && (
               <div className="section-container py-12">
                 <Card className="border-none shadow-lg overflow-hidden">
@@ -295,7 +280,6 @@ const News = () => {
               </div>
             )}
             
-            {/* Category Filters */}
             <div className="bg-white border-y border-gray-200">
               <div className="section-container py-4">
                 <div className="flex overflow-x-auto pb-2 hide-scrollbar">
@@ -316,7 +300,6 @@ const News = () => {
               </div>
             </div>
 
-            {/* News Grid */}
             <div className="section-container py-12">
               {filteredArticles.length === 0 ? (
                 <div className="text-center py-12">
@@ -356,7 +339,6 @@ const News = () => {
                 </div>
               )}
 
-              {/* Pagination */}
               {filteredArticles.length > 0 && (
                 <div className="mt-12">
                   <Pagination>
@@ -396,7 +378,6 @@ const News = () => {
               )}
             </div>
             
-            {/* Newsletter */}
             <div className="bg-alzheimer-tertiary py-16">
               <div className="section-container text-center">
                 <div className="max-w-2xl mx-auto">
