@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 
 const corsHeaders = {
@@ -24,7 +25,7 @@ serve(async (req) => {
         q: 'Alzheimer\'s research AI',
         sortBy: 'publishedAt',
         language: 'en',
-        pageSize: '50'
+        pageSize: '100'  // Increased from 50 to 100 to ensure we have enough data
       }), {
         headers: {
           'X-Api-Key': newsApiKey
@@ -97,7 +98,7 @@ function getSampleNewsData() {
       excerpt: "Researchers at Stanford University have developed a new AI system that can detect early signs of Alzheimer's disease up to a decade before symptoms appear.",
       content: "The revolutionary system combines advanced deep learning algorithms with a novel approach to analyzing longitudinal brain scan data.",
       category: "Research",
-      image: "https://images.unsplash.com/photo-1563213126-a4273aed2016?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1559757175-7b21e5afae2a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: "2",
@@ -106,7 +107,7 @@ function getSampleNewsData() {
       excerpt: "A new blood test that detects biomarkers associated with Alzheimer's disease has shown 94% accuracy in a clinical trial with over 1,500 participants.",
       content: "The test identifies a unique pattern of protein fragments that appear in the bloodstream years before clinical symptoms of Alzheimer's become apparent.",
       category: "Clinical Trials",
-      image: "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1579154204601-01588f351e67?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: "3",
@@ -115,7 +116,7 @@ function getSampleNewsData() {
       excerpt: "A global initiative bringing together researchers, technology companies, and healthcare providers has announced major funding for AI applications in dementia research.",
       content: "The consortium aims to accelerate the development of AI tools for diagnosis, treatment, and care management of dementia patients.",
       category: "Funding",
-      image: "https://images.unsplash.com/photo-1579154341098-e4e158cc7f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1553729459-efe14ef6055d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     },
     {
       id: "4",
@@ -124,16 +125,54 @@ function getSampleNewsData() {
       excerpt: "New research shows that immersive virtual reality environments can provide more sensitive measures of spatial navigation deficits in early Alzheimer's disease.",
       content: "The study demonstrates that VR-based cognitive assessments can detect subtle navigation impairments up to three years earlier than traditional testing methods.",
       category: "Technology",
-      image: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+      image: "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: "5",
+      title: "Machine Learning Model Predicts Drug Response in Alzheimer's Patients",
+      date: "March 5, 2025",
+      excerpt: "A new predictive model helps identify which patients are most likely to benefit from specific Alzheimer's medications, paving the way for personalized treatment plans.",
+      content: "The model analyzes genetic markers and biomarkers to determine optimal treatment strategies for individual patients.",
+      category: "Treatment",
+      image: "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: "6",
+      title: "New Study Links Gut Microbiome to Alzheimer's Risk",
+      date: "February 28, 2025",
+      excerpt: "Researchers have found significant correlations between gut bacteria composition and markers of Alzheimer's disease.",
+      content: "The study suggests potential for microbiome-based early detection and prevention strategies.",
+      category: "Research",
+      image: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: "7",
+      title: "FDA Approves Novel Diagnostic Tool for Early Alzheimer's Detection",
+      date: "February 20, 2025",
+      excerpt: "A groundbreaking diagnostic tool using AI analysis of speech patterns receives FDA approval for clinical use.",
+      content: "The non-invasive test can identify subtle linguistic changes associated with early cognitive decline.",
+      category: "Diagnostics",
+      image: "https://images.unsplash.com/photo-1576671413161-cf763bbb3d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: "8",
+      title: "Global Clinical Trial Launches for Promising Alzheimer's Treatment",
+      date: "February 15, 2025",
+      excerpt: "A multinational phase 3 trial begins for a drug targeting tau protein aggregation in Alzheimer's disease.",
+      content: "The treatment showed significant reduction in cognitive decline in earlier trials.",
+      category: "Clinical Trials",
+      image: "https://images.unsplash.com/photo-1517120026326-d87759a7b63b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
     }
   ];
 
+  // Generate 100 sample news items to ensure we have enough for pagination
   const extendedNews = [];
-  for (let i = 0; i < 50; i++) {
+  for (let i = 0; i < 100; i++) {
     const baseItem = baseNews[i % baseNews.length];
     extendedNews.push({
       ...baseItem,
       id: `${i + 1}`,
+      title: i > 7 ? `${baseItem.title} (${Math.floor(i/8) + 1})` : baseItem.title,
       date: new Date(2025, 3, 20 - i).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
