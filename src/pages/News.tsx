@@ -7,15 +7,16 @@ import { Calendar, ArrowRight, BookOpen, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 import NewsletterForm from '@/components/news/NewsletterForm';
+import { supabase } from '@/integrations/supabase/client';
 
 // Define news article interface
 interface NewsArticle {
   id: string;
   title: string;
   date: string;
-  author: string;
+  author?: string;
   excerpt: string;
-  content: string;
+  content?: string;
   category: string;
   image: string;
 }
@@ -37,35 +38,31 @@ const News = () => {
     const fetchNews = async () => {
       setIsLoading(true);
       try {
-        // Sample news API URL - replace with actual API when available
-        const response = await fetch('https://newsapi.org/v2/everything?q=alzheimers+AI&apiKey=YOUR_API_KEY&pageSize=12');
-        const data = await response.json();
+        console.log('Fetching news via Supabase Edge Function...');
         
-        if (data.status !== 'ok') {
-          throw new Error(data.message || 'Failed to fetch news');
+        const { data, error } = await supabase.functions.invoke('fetch-news');
+        
+        if (error) {
+          throw error;
+        }
+        
+        if (data.usingFallback) {
+          console.log('Using fallback data due to API issue:', data.error);
+          toast({
+            title: "Using sample news data",
+            description: "Could not connect to news service. Using fallback data instead.",
+            variant: "warning",
+          });
         }
         
         // Transform the API data to match our interface
-        const transformedArticles: NewsArticle[] = data.articles.map((article: any, index: number) => ({
-          id: `${index + 1}`, // Generate IDs since NewsAPI doesn't provide them
-          title: article.title,
-          date: new Date(article.publishedAt).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          }),
-          author: article.author || 'Unknown',
-          excerpt: article.description || 'No description available',
-          content: article.content || 'No content available',
-          category: getCategoryFromArticle(article),
-          image: article.urlToImage || 'https://images.unsplash.com/photo-1576089073624-b5f95db1e0f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80'
-        }));
+        const newsItems = data.news;
         
         // Set featured article to be the first one with an image
-        const featured = transformedArticles.find(article => article.image) || transformedArticles[0];
+        const featured = newsItems.find(article => article.image) || newsItems[0];
         
         setFeaturedNews(featured);
-        setArticles(transformedArticles.filter(article => article.id !== featured.id));
+        setArticles(newsItems.filter(article => article.id !== featured.id));
       } catch (error) {
         console.error('Error fetching news:', error);
         toast({
@@ -85,28 +82,6 @@ const News = () => {
     
     fetchNews();
   }, [toast]);
-  
-  // Helper function to assign a category based on article content
-  const getCategoryFromArticle = (article: any): string => {
-    const title = (article.title || '').toLowerCase();
-    const description = (article.description || '').toLowerCase();
-    
-    if (title.includes('trial') || description.includes('trial')) return 'Clinical Trials';
-    if (title.includes('research') || description.includes('research')) return 'Research';
-    if (title.includes('fund') || description.includes('fund') || 
-        title.includes('grant') || description.includes('grant')) return 'Funding';
-    if (title.includes('treat') || description.includes('treat') || 
-        title.includes('therapy') || description.includes('therapy')) return 'Treatment';
-    if (title.includes('tech') || description.includes('tech') || 
-        title.includes('ai') || description.includes('ai')) return 'Technology';
-    if (title.includes('policy') || description.includes('policy') || 
-        title.includes('regulation') || description.includes('regulation')) return 'Policy';
-    if (title.includes('prevent') || description.includes('prevent')) return 'Prevention';
-    if (title.includes('diagnos') || description.includes('diagnos') || 
-        title.includes('detect') || description.includes('detect')) return 'Diagnostics';
-    
-    return 'Research'; // Default category
-  };
   
   // Filter articles by selected category
   const filteredArticles = activeCategory === 'All Categories' 
