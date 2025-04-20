@@ -31,11 +31,11 @@ serve(async (req) => {
       history: [
         {
           role: "user",
-          parts: "You are an AI assistant specialized in Alzheimer's research. Always provide accurate, helpful, and empathetic responses about Alzheimer's disease, its research, treatments, and related topics.",
+          parts: [{ text: "You are an AI assistant specialized in Alzheimer's research. Always provide accurate, helpful, and empathetic responses about Alzheimer's disease, its research, treatments, and related topics." }]
         },
         {
           role: "model",
-          parts: "I understand that I am an AI assistant specialized in Alzheimer's research. I will provide accurate, up-to-date, and empathetic information about Alzheimer's disease, including research developments, treatment options, prevention strategies, and support resources. I will ensure my responses are helpful while maintaining sensitivity to the challenging nature of this topic.",
+          parts: [{ text: "I understand that I am an AI assistant specialized in Alzheimer's research. I will provide accurate, up-to-date, and empathetic information about Alzheimer's disease, including research developments, treatment options, prevention strategies, and support resources. I will ensure my responses are helpful while maintaining sensitivity to the challenging nature of this topic." }]
         },
       ],
       generationConfig: {
@@ -46,7 +46,7 @@ serve(async (req) => {
       },
     });
 
-    const result = await chat.sendMessage(message);
+    const result = await chat.sendMessage([{ text: message }]);
     const response = await result.response;
     const text = response.text();
     
