@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -8,6 +9,14 @@ import { Link } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
 import NewsletterForm from '@/components/news/NewsletterForm';
 import { supabase } from '@/integrations/supabase/client';
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from '@/components/ui/pagination';
 
 // Define news article interface
 interface NewsArticle {
@@ -27,6 +36,8 @@ const News = () => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [featuredNews, setFeaturedNews] = useState<NewsArticle | null>(null);
   const [activeCategory, setActiveCategory] = useState('All Categories');
+  const [currentPage, setCurrentPage] = useState(1);
+  const articlesPerPage = 8;
   
   const categories = [
     'All Categories', 'Research', 'Clinical Trials', 'Technology', 
@@ -91,7 +102,17 @@ const News = () => {
   // Handle category selection
   const handleCategoryClick = (category: string) => {
     setActiveCategory(category);
+    setCurrentPage(1);
   };
+
+  // Calculate pagination
+  const indexOfLastArticle = currentPage * articlesPerPage;
+  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+  const currentArticles = filteredArticles.slice(indexOfFirstArticle, indexOfLastArticle);
+  const totalPages = Math.ceil(filteredArticles.length / articlesPerPage);
+
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   
   // Sample data for fallback
   const getSampleNewsData = () => {
@@ -180,6 +201,22 @@ const News = () => {
       ]
     };
   };
+
+  // Generate page numbers for pagination
+  const pageNumbers = [];
+  if (totalPages <= 5) {
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(i);
+    }
+  } else {
+    if (currentPage <= 3) {
+      pageNumbers.push(1, 2, 3, 4, 5, '...', totalPages);
+    } else if (currentPage >= totalPages - 2) {
+      pageNumbers.push(1, '...', totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+    } else {
+      pageNumbers.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -287,7 +324,7 @@ const News = () => {
                 </div>
               ) : (
                 <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredArticles.map((item) => (
+                  {currentArticles.map((item) => (
                     <Card key={item.id} className="border border-gray-200 overflow-hidden flex flex-col h-full hover:shadow-md transition-shadow duration-300">
                       <div className="h-48 overflow-hidden">
                         <img 
@@ -320,29 +357,43 @@ const News = () => {
               )}
 
               {/* Pagination */}
-              <div className="mt-12 flex justify-center">
-                <nav className="flex items-center space-x-1">
-                  <Button variant="outline" size="sm" disabled>
-                    Previous
-                  </Button>
-                  <Button variant="outline" size="sm" className="bg-alzheimer-primary text-white hover:bg-alzheimer-accent">
-                    1
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    2
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    3
-                  </Button>
-                  <span className="px-2">...</span>
-                  <Button variant="outline" size="sm">
-                    10
-                  </Button>
-                  <Button variant="outline" size="sm">
-                    Next
-                  </Button>
-                </nav>
-              </div>
+              {filteredArticles.length > 0 && (
+                <div className="mt-12">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          onClick={() => currentPage > 1 && paginate(currentPage - 1)}
+                          className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"} 
+                        />
+                      </PaginationItem>
+                      
+                      {pageNumbers.map((number, index) => (
+                        <PaginationItem key={index}>
+                          {number === '...' ? (
+                            <span className="px-2">...</span>
+                          ) : (
+                            <PaginationLink 
+                              onClick={() => paginate(number as number)}
+                              isActive={currentPage === number}
+                              className="cursor-pointer"
+                            >
+                              {number}
+                            </PaginationLink>
+                          )}
+                        </PaginationItem>
+                      ))}
+                      
+                      <PaginationItem>
+                        <PaginationNext 
+                          onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
+                          className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}  
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
             </div>
             
             {/* Newsletter */}

@@ -25,7 +25,7 @@ serve(async (req) => {
     console.log('Sending message to Gemini API:', message.substring(0, 50) + '...');
     
     const genAI = new GoogleGenerativeAI(geminiApiKey);
-    // Updated to use the correct model name
+    // Using the correct model name
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const chat = model.startChat({
@@ -47,6 +47,7 @@ serve(async (req) => {
       },
     });
 
+    console.log('Sending message to Gemini with parts format...');
     const result = await chat.sendMessage([{ text: message }]);
     const response = await result.response;
     const text = response.text();

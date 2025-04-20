@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Bot, SendHorizontal, AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const AIChat = () => {
   const [message, setMessage] = useState('');
@@ -42,7 +43,13 @@ const AIChat = () => {
       });
 
       if (error) {
-        throw error;
+        console.error('Supabase function error:', error);
+        throw new Error(`Function error: ${error.message}`);
+      }
+
+      if (!data || !data.response) {
+        console.error('Invalid response format:', data);
+        throw new Error('Received invalid response format from the AI service');
       }
 
       const aiResponse = data.response;
@@ -69,6 +76,11 @@ const AIChat = () => {
     // Remove the error message
     setChatHistory(prev => prev.filter(msg => msg.role !== 'system'));
     setHasError(false);
+    toast({
+      title: "Reconnecting",
+      description: "Attempting to reconnect to the AI service...",
+      variant: "default",
+    });
   };
 
   return (
@@ -81,6 +93,15 @@ const AIChat = () => {
       </CardHeader>
       <CardContent className="p-4">
         <div className="space-y-4">
+          {hasError && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Connection to AI service failed. Please check your internet connection and try again.
+              </AlertDescription>
+            </Alert>
+          )}
+          
           <div 
             ref={chatContainerRef}
             className="h-[400px] overflow-y-auto p-4 space-y-4 mb-4 border rounded-lg bg-gray-50"
