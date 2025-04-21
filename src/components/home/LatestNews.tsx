@@ -8,6 +8,14 @@ import { supabase } from '@/integrations/supabase/client';
 import NewsCard from './NewsCard';
 import CategoryFilter from './CategoryFilter';
 import NewsLoadingState from './NewsLoadingState';
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from '@/components/ui/pagination';
 
 interface NewsItem {
   id: string;
@@ -22,6 +30,8 @@ const LatestNews = () => {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [news, setNews] = useState<NewsItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
   const { toast } = useToast();
   
   useEffect(() => {
@@ -64,6 +74,13 @@ const LatestNews = () => {
   const filteredNews = activeCategory 
     ? news.filter(item => item.category === activeCategory) 
     : news;
+    
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredNews.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredNews.length / itemsPerPage);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   if (isLoading) {
     return <NewsLoadingState />;
@@ -93,10 +110,44 @@ const LatestNews = () => {
         />
 
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {filteredNews.slice(0, 4).map((item) => (
+          {currentItems.map((item) => (
             <NewsCard key={item.id} item={item} />
           ))}
         </div>
+        
+        {filteredNews.length > itemsPerPage && (
+          <div className="mt-8 flex justify-center">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => currentPage > 1 && paginate(currentPage - 1)}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"} 
+                  />
+                </PaginationItem>
+                
+                {Array.from({ length: Math.min(5, totalPages) }).map((_, index) => (
+                  <PaginationItem key={index}>
+                    <PaginationLink 
+                      onClick={() => paginate(index + 1)}
+                      isActive={currentPage === index + 1}
+                      className="cursor-pointer"
+                    >
+                      {index + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => currentPage < totalPages && paginate(currentPage + 1)}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}  
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
       </div>
     </div>
   );

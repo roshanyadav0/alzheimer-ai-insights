@@ -25,7 +25,7 @@ serve(async (req) => {
         q: 'Alzheimer\'s research AI',
         sortBy: 'publishedAt',
         language: 'en',
-        pageSize: '100'  // Increased from 50 to 100 to ensure we have enough data
+        pageSize: '100'  // Maximum allowed by the API
       }), {
         headers: {
           'X-Api-Key': newsApiKey
@@ -42,6 +42,7 @@ serve(async (req) => {
       throw new Error(data.message || 'Failed to fetch news');
     }
 
+    // Transform the news data
     const transformedNews = data.articles.map((article: any, index: number) => ({
       id: `${index + 1}`,
       title: article.title || 'Untitled',

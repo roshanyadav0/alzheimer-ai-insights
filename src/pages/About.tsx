@@ -40,7 +40,7 @@ const About = () => {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-alzheimer-primary/20 to-alzheimer-secondary/20 rounded-2xl transform rotate-3"></div>
               <img 
-                src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                src="https://images.unsplash.com/photo-1574096079513-d8259312b785?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
                 alt="Elderly person with caregiver" 
                 className="relative z-10 rounded-2xl shadow-lg w-full object-cover transform -rotate-3"
               />
@@ -152,12 +152,12 @@ const About = () => {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button asChild className="bg-white text-alzheimer-primary hover:bg-alzheimer-tertiary">
-                <a href="#" className="px-8 py-3 text-base">
+                <a href="https://www.alz.org/alzheimers-dementia/research_progress/clinical-trials" target="_blank" rel="noopener noreferrer" className="px-8 py-3 text-base">
                   Participate in Research
                 </a>
               </Button>
               <Button asChild variant="outline" className="border-white text-white hover:bg-white/10">
-                <a href="#" className="px-8 py-3 text-base">
+                <a href="https://www.alz.org/help-support/resources/donate" target="_blank" rel="noopener noreferrer" className="px-8 py-3 text-base">
                   Support the Cause
                 </a>
               </Button>
