@@ -307,42 +307,83 @@ const Assessment = () => {
 
         {/* Detailed Report Dialog */}
         <Dialog open={showDetailedReport} onOpenChange={handleCloseDetailedReport}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="text-2xl font-bold text-alzheimer-dark">Detailed Assessment Report</DialogTitle>
-              <DialogDescription>
-                A comprehensive analysis of your cognitive health assessment
+          <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto bg-white">
+            <DialogHeader className="border-b border-gray-100 pb-6">
+              <DialogTitle className="text-3xl font-bold text-alzheimer-dark flex items-center gap-3">
+                <div className="w-10 h-10 bg-alzheimer-primary rounded-full flex items-center justify-center">
+                  <Brain className="h-6 w-6 text-white" />
+                </div>
+                Detailed Assessment Report
+              </DialogTitle>
+              <DialogDescription className="text-lg text-gray-600 mt-2">
+                A comprehensive analysis of your cognitive health assessment with personalized insights
               </DialogDescription>
             </DialogHeader>
             
-            <div className="mt-6">
-              <h3 className="text-lg font-semibold text-alzheimer-dark mb-2">Risk Assessment Summary</h3>
-              
-              {result && (
-                <div className={`p-4 rounded-md mb-6 ${
-                  result.risk === 'Low' ? 'bg-green-50 border border-green-200' : 
-                  result.risk === 'Moderate' ? 'bg-yellow-50 border border-yellow-200' : 'bg-red-50 border border-red-200'
-                }`}>
-                  <div className="flex items-center mb-2">
-                    {result.risk === 'Low' ? (
-                      <CheckCircle size={20} className="text-green-600 mr-2" />
-                    ) : (
-                      <AlertCircle size={20} className={`mr-2 ${result.risk === 'Moderate' ? 'text-yellow-600' : 'text-red-600'}`} />
-                    )}
-                    <h4 className="font-semibold">{result.risk} Risk Profile (Score: {result.score}/{questions.length * 3})</h4>
+            <div className="mt-8 space-y-8">
+              {/* Risk Assessment Summary */}
+              <section className="bg-gradient-to-r from-alzheimer-tertiary to-blue-50 rounded-xl p-6">
+                <h3 className="text-2xl font-bold text-alzheimer-dark mb-4 flex items-center gap-2">
+                  <AlertCircle className="h-6 w-6 text-alzheimer-primary" />
+                  Risk Assessment Summary
+                </h3>
+                
+                {result && (
+                  <div className={`p-6 rounded-lg border-2 ${
+                    result.risk === 'Low' ? 'bg-green-50 border-green-200' : 
+                    result.risk === 'Moderate' ? 'bg-yellow-50 border-yellow-200' : 'bg-red-50 border-red-200'
+                  }`}>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        {result.risk === 'Low' ? (
+                          <CheckCircle size={28} className="text-green-600" />
+                        ) : (
+                          <AlertCircle size={28} className={`${result.risk === 'Moderate' ? 'text-yellow-600' : 'text-red-600'}`} />
+                        )}
+                        <div>
+                          <h4 className="text-xl font-bold text-gray-800">{result.risk} Risk Profile</h4>
+                          <p className="text-sm text-gray-600">Assessment Score: {result.score}/{questions.length * 3}</p>
+                        </div>
+                      </div>
+                      <div className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                        result.risk === 'Low' ? 'bg-green-100 text-green-800' : 
+                        result.risk === 'Moderate' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                      }`}>
+                        {result.risk} Risk
+                      </div>
+                    </div>
+                    <p className="text-gray-700 leading-relaxed">{result.explanation}</p>
                   </div>
-                  <p className="text-sm text-gray-700">{result.explanation}</p>
-                </div>
-              )}
+                )}
+              </section>
               
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold text-alzheimer-dark mb-4">Brain Activity Visualization</h3>
-                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                  <p className="text-sm text-gray-600 mb-4">
-                    This visualization compares your estimated brain activity based on assessment responses to typical activity patterns.
+              {/* Brain Activity Visualization */}
+              <section className="bg-white rounded-xl border border-gray-200 shadow-sm">
+                <div className="p-6 border-b border-gray-100">
+                  <h3 className="text-2xl font-bold text-alzheimer-dark mb-2 flex items-center gap-2">
+                    <Brain className="h-6 w-6 text-alzheimer-primary" />
+                    Brain Activity Analysis
+                  </h3>
+                  <p className="text-gray-600">
+                    This visualization compares your estimated brain activity patterns based on assessment responses to typical baseline activity levels across different cognitive regions.
                   </p>
+                </div>
+                
+                <div className="p-6">
+                  <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                    <div className="flex items-center gap-4 text-sm">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-purple-500 rounded"></div>
+                        <span className="font-medium">Typical Activity Range</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-orange-500 rounded"></div>
+                        <span className="font-medium">Your Estimated Activity</span>
+                      </div>
+                    </div>
+                  </div>
                   
-                  <div className="h-72">
+                  <div className="h-80 w-full">
                     <ChartContainer 
                       config={{
                         normal: { label: "Typical Activity", color: "#8B5CF6" },
@@ -352,32 +393,88 @@ const Assessment = () => {
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart
                           data={brainActivityData}
-                          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                         >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip />
-                          <Area type="monotone" dataKey="normal" stroke="#8B5CF6" fill="#8B5CF6" fillOpacity={0.3} />
-                          <Area type="monotone" dataKey="user" stroke="#F97316" fill="#F97316" fillOpacity={0.3} />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                          <XAxis 
+                            dataKey="name" 
+                            stroke="#6B7280"
+                            fontSize={12}
+                            tickLine={false}
+                            axisLine={false}
+                          />
+                          <YAxis 
+                            stroke="#6B7280"
+                            fontSize={12}
+                            tickLine={false}
+                            axisLine={false}
+                          />
+                          <Tooltip 
+                            contentStyle={{
+                              backgroundColor: 'white',
+                              border: '1px solid #E5E7EB',
+                              borderRadius: '8px',
+                              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                            }}
+                          />
+                          <Area 
+                            type="monotone" 
+                            dataKey="normal" 
+                            stroke="#8B5CF6" 
+                            fill="#8B5CF6" 
+                            fillOpacity={0.2}
+                            strokeWidth={2}
+                          />
+                          <Area 
+                            type="monotone" 
+                            dataKey="user" 
+                            stroke="#F97316" 
+                            fill="#F97316" 
+                            fillOpacity={0.2}
+                            strokeWidth={2}
+                          />
                         </AreaChart>
                       </ResponsiveContainer>
                     </ChartContainer>
-                    <ChartLegend>
-                      <ChartLegendContent />
-                    </ChartLegend>
                   </div>
                 </div>
-              </div>
+              </section>
               
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold text-alzheimer-dark mb-4">Cognitive Decline Trajectory</h3>
-                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                  <p className="text-sm text-gray-600 mb-4">
-                    This chart shows potential cognitive decline trajectories based on different risk profiles over time.
+              {/* Cognitive Decline Trajectory */}
+              <section className="bg-white rounded-xl border border-gray-200 shadow-sm">
+                <div className="p-6 border-b border-gray-100">
+                  <h3 className="text-2xl font-bold text-alzheimer-dark mb-2 flex items-center gap-2">
+                    <AlertCircle className="h-6 w-6 text-alzheimer-primary" />
+                    Cognitive Health Trajectory
+                  </h3>
+                  <p className="text-gray-600">
+                    This predictive model shows potential cognitive health trajectories over time based on different risk profiles and current assessment patterns.
                   </p>
+                </div>
+                
+                <div className="p-6">
+                  <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-green-500 rounded"></div>
+                        <span className="font-medium">No Risk</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-blue-500 rounded"></div>
+                        <span className="font-medium">Low Risk</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-yellow-500 rounded"></div>
+                        <span className="font-medium">Moderate Risk</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 bg-red-500 rounded"></div>
+                        <span className="font-medium">High Risk</span>
+                      </div>
+                    </div>
+                  </div>
                   
-                  <div className="h-72">
+                  <div className="h-80 w-full">
                     <ChartContainer 
                       config={{
                         normal: { label: "No Risk", color: "#22C55E" },
@@ -389,81 +486,131 @@ const Assessment = () => {
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart
                           data={cognitiveDeclineData}
-                          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                         >
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <XAxis dataKey="age" />
-                          <YAxis />
-                          <Tooltip />
-                          <Area type="monotone" dataKey="normal" stroke="#22C55E" fill="#22C55E" fillOpacity={0.3} />
-                          <Area type="monotone" dataKey="mild" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.3} />
-                          <Area type="monotone" dataKey="moderate" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.3} />
-                          <Area type="monotone" dataKey="severe" stroke="#EF4444" fill="#EF4444" fillOpacity={0.3} />
+                          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                          <XAxis 
+                            dataKey="age" 
+                            stroke="#6B7280"
+                            fontSize={12}
+                            tickLine={false}
+                            axisLine={false}
+                            label={{ value: 'Age', position: 'insideBottom', offset: -10 }}
+                          />
+                          <YAxis 
+                            stroke="#6B7280"
+                            fontSize={12}
+                            tickLine={false}
+                            axisLine={false}
+                            label={{ value: 'Cognitive Function (%)', angle: -90, position: 'insideLeft' }}
+                          />
+                          <Tooltip 
+                            contentStyle={{
+                              backgroundColor: 'white',
+                              border: '1px solid #E5E7EB',
+                              borderRadius: '8px',
+                              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                            }}
+                          />
+                          <Area type="monotone" dataKey="normal" stroke="#22C55E" fill="#22C55E" fillOpacity={0.2} strokeWidth={2} />
+                          <Area type="monotone" dataKey="mild" stroke="#3B82F6" fill="#3B82F6" fillOpacity={0.2} strokeWidth={2} />
+                          <Area type="monotone" dataKey="moderate" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.2} strokeWidth={2} />
+                          <Area type="monotone" dataKey="severe" stroke="#EF4444" fill="#EF4444" fillOpacity={0.2} strokeWidth={2} />
                         </AreaChart>
                       </ResponsiveContainer>
                     </ChartContainer>
-                    <ChartLegend>
-                      <ChartLegendContent />
-                    </ChartLegend>
                   </div>
                 </div>
-              </div>
+              </section>
               
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold text-alzheimer-dark mb-4">Personalized Recommendations</h3>
-                <div className="space-y-4 p-6 bg-alzheimer-tertiary rounded-lg">
-                  <div className="flex items-start">
-                    <div className="bg-alzheimer-primary rounded-full p-2 mr-4">
-                      <Brain className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-alzheimer-dark">Cognitive Exercise</h4>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Engage in brain-stimulating activities like puzzles, learning a new language, or playing musical instruments for at least 30 minutes daily.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="bg-alzheimer-primary rounded-full p-2 mr-4">
-                      <Brain className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-alzheimer-dark">Diet & Nutrition</h4>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Maintain a Mediterranean-style diet rich in fruits, vegetables, whole grains, fish, and olive oil. Limit processed foods and sugar.
-                      </p>
+              {/* Personalized Recommendations */}
+              <section className="bg-gradient-to-br from-alzheimer-tertiary via-blue-50 to-purple-50 rounded-xl p-6">
+                <h3 className="text-2xl font-bold text-alzheimer-dark mb-6 flex items-center gap-2">
+                  <Brain className="h-6 w-6 text-alzheimer-primary" />
+                  Personalized Recommendations
+                </h3>
+                
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                    <div className="flex items-start gap-4">
+                      <div className="bg-alzheimer-primary rounded-full p-3 flex-shrink-0">
+                        <Brain className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold text-alzheimer-dark mb-2">Cognitive Exercise</h4>
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          Engage in brain-stimulating activities like puzzles, learning a new language, or playing musical instruments for at least 30 minutes daily. Consider apps like Lumosity or Peak for structured cognitive training.
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-start">
-                    <div className="bg-alzheimer-primary rounded-full p-2 mr-4">
-                      <Brain className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-alzheimer-dark">Physical Activity</h4>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Aim for at least 150 minutes of moderate aerobic exercise weekly, complemented by strength training and balance exercises.
-                      </p>
+                  
+                  <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                    <div className="flex items-start gap-4">
+                      <div className="bg-green-500 rounded-full p-3 flex-shrink-0">
+                        <Brain className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold text-alzheimer-dark mb-2">Diet & Nutrition</h4>
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          Maintain a Mediterranean-style diet rich in fruits, vegetables, whole grains, fish, and olive oil. Limit processed foods and sugar. Consider omega-3 supplements after consulting your doctor.
+                        </p>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-start">
-                    <div className="bg-alzheimer-primary rounded-full p-2 mr-4">
-                      <Brain className="h-5 w-5 text-white" />
+                  
+                  <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                    <div className="flex items-start gap-4">
+                      <div className="bg-blue-500 rounded-full p-3 flex-shrink-0">
+                        <Brain className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold text-alzheimer-dark mb-2">Physical Activity</h4>
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          Aim for at least 150 minutes of moderate aerobic exercise weekly, complemented by strength training and balance exercises. Activities like walking, swimming, and yoga are particularly beneficial.
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-alzheimer-dark">Social Engagement</h4>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Maintain active social connections through group activities, volunteering, or regular interactions with friends and family.
-                      </p>
+                  </div>
+                  
+                  <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100">
+                    <div className="flex items-start gap-4">
+                      <div className="bg-purple-500 rounded-full p-3 flex-shrink-0">
+                        <Brain className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-bold text-alzheimer-dark mb-2">Social Engagement</h4>
+                        <p className="text-gray-700 text-sm leading-relaxed">
+                          Maintain active social connections through group activities, volunteering, or regular interactions with friends and family. Consider joining clubs or community groups that align with your interests.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </section>
               
-              <div className="flex justify-end">
-                <Button onClick={handleDownloadReport} className="bg-alzheimer-primary hover:bg-alzheimer-accent flex items-center">
-                  <Download size={16} className="mr-2" />
-                  Download PDF Report
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-6 border-t border-gray-200">
+                <Button 
+                  onClick={handleDownloadReport} 
+                  className="bg-alzheimer-primary hover:bg-alzheimer-accent text-white px-8 py-3 rounded-lg font-semibold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  <Download size={20} />
+                  Download Complete Report
                 </Button>
+                <Button 
+                  onClick={resetAssessment} 
+                  variant="outline" 
+                  className="border-2 border-alzheimer-primary text-alzheimer-primary hover:bg-alzheimer-tertiary px-8 py-3 rounded-lg font-semibold transition-all duration-200"
+                >
+                  Take Assessment Again
+                </Button>
+              </div>
+              
+              <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded-r-lg">
+                <p className="text-sm text-blue-700">
+                  <strong>Disclaimer:</strong> This assessment is for informational purposes only and does not constitute medical advice. Please consult with a qualified healthcare professional for proper evaluation, diagnosis, and treatment recommendations.
+                </p>
               </div>
             </div>
           </DialogContent>
