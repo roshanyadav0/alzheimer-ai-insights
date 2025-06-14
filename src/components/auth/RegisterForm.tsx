@@ -59,10 +59,10 @@ const RegisterForm = () => {
         throw error;
       }
       
-      toast.success('Registration successful! You are now logged in.');
+      toast.success('Registration successful! Please check your email to verify your account, then login.');
       
-      // Redirect to profile
-      navigate('/profile');
+      // Redirect to login page instead of profile
+      navigate('/login');
     } catch (error: any) {
       // Extract the specific error message
       const errorMessage = error.message || 'Please try again.';

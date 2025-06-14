@@ -40,8 +40,8 @@ const About = () => {
             <div className="relative">
               <div className="absolute inset-0 bg-gradient-to-r from-alzheimer-primary/20 to-alzheimer-secondary/20 rounded-2xl transform rotate-3"></div>
               <img 
-                src="https://images.unsplash.com/photo-1574096079513-d8259312b785?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
-                alt="Elderly person with caregiver" 
+                src="https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" 
+                alt="Brain neural network visualization" 
                 className="relative z-10 rounded-2xl shadow-lg w-full object-cover transform -rotate-3"
               />
             </div>

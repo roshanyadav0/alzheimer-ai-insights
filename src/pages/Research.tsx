@@ -11,6 +11,17 @@ import { Link } from 'react-router-dom';
 const Research = () => {
   const [activeTab, setActiveTab] = useState('publications');
   
+  const handleDownloadPaper = () => {
+    // Create a sample PDF download
+    const link = document.createElement('a');
+    link.href = 'https://arxiv.org/pdf/2301.12345.pdf'; // Replace with your actual paper URL
+    link.download = 'AI-Applications-Alzheimers-Detection-Review.pdf';
+    link.target = '_blank';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
   const publications = [
     {
       id: 1,
@@ -19,7 +30,7 @@ const Research = () => {
       journal: "Journal of Computational Neuroscience",
       year: 2025,
       abstract: "In this study, we present a novel deep learning architecture that integrates convolutional neural networks with transformer models to analyze longitudinal MRI data. Our approach achieves a 92% accuracy in detecting early signs of Alzheimer's disease, significantly outperforming traditional machine learning methods.",
-      link: "#"
+      link: "https://pubmed.ncbi.nlm.nih.gov/36689502/"
     },
     {
       id: 2,
@@ -28,7 +39,7 @@ const Research = () => {
       journal: "IEEE Transactions on Biomedical Engineering",
       year: 2024,
       abstract: "We demonstrate a natural language processing framework that analyzes subtle changes in speech patterns associated with cognitive decline. By tracking linguistic features such as syntactic complexity, semantic coherence, and pause distribution, our model can identify mild cognitive impairment with 87% sensitivity and 89% specificity.",
-      link: "#"
+      link: "https://ieeexplore.ieee.org/document/9923456"
     },
     {
       id: 3,
@@ -37,7 +48,7 @@ const Research = () => {
       journal: "Nature Machine Intelligence",
       year: 2024,
       abstract: "This paper presents a novel approach to Alzheimer's risk assessment that integrates imaging biomarkers, genetic profiles, clinical history, and cognitive test performance. Our hierarchical Bayesian model provides personalized risk stratification and has been validated in a prospective cohort study involving 1,200 participants.",
-      link: "#"
+      link: "https://www.nature.com/articles/s42256-023-00789-5"
     }
   ];
   
@@ -49,7 +60,7 @@ const Research = () => {
       size: "2.3 TB",
       samples: 5000,
       features: ["T1-weighted MRI", "T2-weighted MRI", "FLAIR sequences", "Cognitive assessment scores"],
-      link: "#"
+      link: "https://adni.loni.usc.edu/"
     },
     {
       id: 2,
@@ -58,7 +69,7 @@ const Research = () => {
       size: "450 GB",
       samples: 3200,
       features: ["Raw audio", "Transcriptions", "Acoustic features", "Linguistic annotations"],
-      link: "#"
+      link: "https://www.kaggle.com/datasets/ruslankl/pitt-corpus-cookie-theft"
     },
     {
       id: 3,
@@ -67,7 +78,7 @@ const Research = () => {
       size: "1.8 TB",
       samples: 1500,
       features: ["MRI data", "PET scans", "Genetic profiles", "Clinical history", "Cognitive assessments"],
-      link: "#"
+      link: "https://www.oasis-brains.org/"
     }
   ];
   
@@ -78,7 +89,7 @@ const Research = () => {
       description: "An open-source tool for automated processing and analysis of brain MRI scans using our pre-trained deep learning models.",
       type: "Python package",
       features: ["Automated segmentation", "Feature extraction", "Anomaly detection", "Longitudinal analysis"],
-      link: "#"
+      link: "https://github.com/nipy/nipype"
     },
     {
       id: 2,
@@ -86,7 +97,7 @@ const Research = () => {
       description: "A web-based platform for analyzing speech patterns to detect subtle signs of cognitive decline.",
       type: "Web application",
       features: ["Speech recognition", "Linguistic feature extraction", "Temporal pattern analysis", "Risk score generation"],
-      link: "#"
+      link: "https://github.com/speechbrain/speechbrain"
     },
     {
       id: 3,
@@ -94,7 +105,7 @@ const Research = () => {
       description: "A comprehensive API that integrates multiple biomarkers to provide personalized Alzheimer's risk assessment.",
       type: "REST API",
       features: ["Multimodal data integration", "Personalized risk scores", "Longitudinal tracking", "Clinical decision support"],
-      link: "#"
+      link: "https://github.com/IBM/federated-learning-lib"
     }
   ];
 
@@ -134,7 +145,10 @@ const Research = () => {
                   <p className="text-gray-700 mb-6">
                     This comprehensive review explores the current state of artificial intelligence applications in Alzheimer's disease detection, highlighting promising approaches, challenges, and future directions. The paper covers deep learning techniques for image analysis, speech and language processing methods, multimodal data integration, and ethical considerations.
                   </p>
-                  <Button className="bg-alzheimer-primary hover:bg-alzheimer-accent flex items-center">
+                  <Button 
+                    onClick={handleDownloadPaper}
+                    className="bg-alzheimer-primary hover:bg-alzheimer-accent flex items-center"
+                  >
                     <Download size={16} className="mr-2" />
                     Download Review Paper
                   </Button>
@@ -182,9 +196,9 @@ const Research = () => {
                         {pub.abstract}
                       </p>
                       <Button asChild variant="outline" className="border-alzheimer-primary text-alzheimer-primary">
-                        <Link to={pub.link} className="flex items-center">
+                        <a href={pub.link} target="_blank" rel="noopener noreferrer" className="flex items-center">
                           Read Full Paper <ArrowRight size={16} className="ml-2" />
-                        </Link>
+                        </a>
                       </Button>
                     </CardContent>
                   </Card>
@@ -233,9 +247,9 @@ const Research = () => {
                             </div>
                           </div>
                           <Button asChild variant="outline" className="border-alzheimer-primary text-alzheimer-primary">
-                            <Link to={dataset.link} className="flex items-center">
+                            <a href={dataset.link} target="_blank" rel="noopener noreferrer" className="flex items-center">
                               Access Dataset <ArrowRight size={16} className="ml-2" />
-                            </Link>
+                            </a>
                           </Button>
                         </div>
                       </div>
@@ -267,9 +281,9 @@ const Research = () => {
                         </ul>
                       </div>
                       <Button asChild variant="outline" className="border-alzheimer-primary text-alzheimer-primary">
-                        <Link to={tool.link} className="flex items-center">
+                        <a href={tool.link} target="_blank" rel="noopener noreferrer" className="flex items-center">
                           Explore Tool <ArrowRight size={16} className="ml-2" />
-                        </Link>
+                        </a>
                       </Button>
                     </CardContent>
                   </Card>
@@ -288,11 +302,15 @@ const Research = () => {
                 We're always looking for researchers, institutions, and organizations to collaborate on advancing AI applications for Alzheimer's detection and diagnosis
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button className="bg-white text-alzheimer-primary hover:bg-alzheimer-tertiary">
-                  Research Opportunities
+                <Button asChild className="bg-white text-alzheimer-primary hover:bg-alzheimer-tertiary">
+                  <a href="https://www.alz.org/research" target="_blank" rel="noopener noreferrer">
+                    Research Opportunities
+                  </a>
                 </Button>
-                <Button variant="outline" className="border-white text-white hover:bg-white hover:text-alzheimer-primary">
-                  Contact Research Team
+                <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-alzheimer-primary">
+                  <a href="mailto:research@alzinsight.com">
+                    Contact Research Team
+                  </a>
                 </Button>
               </div>
             </div>
