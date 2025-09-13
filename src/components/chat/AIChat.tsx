@@ -4,14 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Bot, SendHorizontal, AlertCircle } from 'lucide-react';
+import { Bot, SendHorizontal, AlertCircle, User } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import AIResponseCard from './AIResponseCard';
 
 const AIChat = () => {
   const [message, setMessage] = useState('');
-  const [chatHistory, setChatHistory] = useState<Array<{ role: 'user' | 'assistant' | 'system', content: string }>>([
-    { role: 'assistant', content: "Hello! I'm your AI assistant specialized in Alzheimer's research. How can I help you today?" }
+  const [chatHistory, setChatHistory] = useState<Array<{ role: 'user' | 'assistant' | 'system', content: string, timestamp?: Date }>>([
+    { role: 'assistant', content: "Hello! I'm your AI assistant specialized in Alzheimer's research. How can I help you today?", timestamp: new Date() }
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -33,7 +34,7 @@ const AIChat = () => {
     setHasError(false);
     const userMessage = message;
     setMessage('');
-    setChatHistory(prev => [...prev, { role: 'user', content: userMessage }]);
+    setChatHistory(prev => [...prev, { role: 'user', content: userMessage, timestamp: new Date() }]);
 
     try {
       console.log('Sending message to Gemini API via Supabase Edge Function...');
@@ -53,13 +54,14 @@ const AIChat = () => {
       }
 
       const aiResponse = data.response;
-      setChatHistory(prev => [...prev, { role: 'assistant', content: aiResponse }]);
+      setChatHistory(prev => [...prev, { role: 'assistant', content: aiResponse, timestamp: new Date() }]);
     } catch (error) {
       console.error('Error with AI chat:', error);
       setHasError(true);
       setChatHistory(prev => [...prev, { 
         role: 'system', 
-        content: "I'm sorry, I encountered a technical issue. Please try again in a moment." 
+        content: "I'm sorry, I encountered a technical issue. Please try again in a moment.",
+        timestamp: new Date()
       }]);
       
       toast({
@@ -84,15 +86,20 @@ const AIChat = () => {
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto shadow-lg">
-      <CardHeader className="bg-alzheimer-primary/5">
-        <CardTitle className="flex items-center gap-2">
-          <Bot className="w-5 h-5 text-alzheimer-primary" />
-          Alzheimer's Research AI Assistant
+    <Card className="w-full max-w-5xl mx-auto shadow-lg border-0 bg-transparent">
+      <CardHeader className="bg-gradient-to-r from-primary/5 to-secondary/5 border-b">
+        <CardTitle className="flex items-center gap-3 text-xl">
+          <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+            <Bot className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold text-foreground">Alzheimer's Research AI Assistant</h2>
+            <p className="text-sm text-muted-foreground font-normal">Get expert insights on Alzheimer's research and care</p>
+          </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4">
-        <div className="space-y-4">
+      <CardContent className="p-6">
+        <div className="space-y-6">
           {hasError && (
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
@@ -104,66 +111,101 @@ const AIChat = () => {
           
           <div 
             ref={chatContainerRef}
-            className="h-[400px] overflow-y-auto p-4 space-y-4 mb-4 border rounded-lg bg-gray-50"
+            className="h-[600px] overflow-y-auto space-y-6 pr-2 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent"
           >
             {chatHistory.map((msg, index) => (
-              <div
-                key={index}
-                className={`p-3 rounded-lg ${
-                  msg.role === 'user'
-                    ? 'bg-alzheimer-primary/10 ml-auto max-w-[80%] text-right'
-                    : msg.role === 'system'
-                    ? 'bg-red-50 border-red-200 border text-red-800 mr-auto max-w-[80%] flex items-center'
-                    : 'bg-white mr-auto max-w-[80%] border shadow-sm'
-                }`}
-              >
-                {msg.role === 'system' && (
-                  <AlertCircle className="w-4 h-4 mr-2 text-red-600" />
+              <div key={index} className="space-y-4">
+                {msg.role === 'user' && (
+                  <div className="flex items-start gap-3 justify-end">
+                    <div className="max-w-[80%] bg-primary text-primary-foreground rounded-2xl rounded-tr-md px-4 py-3 shadow-sm">
+                      <p className="text-sm leading-relaxed">{msg.content}</p>
+                      {msg.timestamp && (
+                        <p className="text-xs opacity-75 mt-2">
+                          {msg.timestamp.toLocaleTimeString()}
+                        </p>
+                      )}
+                    </div>
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                      <User className="w-4 h-4 text-white" />
+                    </div>
+                  </div>
                 )}
-                {msg.content}
+                
+                {msg.role === 'assistant' && (
+                  <div className="max-w-[90%]">
+                    <AIResponseCard content={msg.content} timestamp={msg.timestamp} />
+                  </div>
+                )}
+                
+                {msg.role === 'system' && (
+                  <div className="flex items-center gap-3">
+                    <AlertCircle className="w-8 h-8 text-destructive flex-shrink-0" />
+                    <div className="bg-destructive/10 border border-destructive/20 text-destructive rounded-lg px-4 py-3 max-w-[80%]">
+                      <p className="text-sm">{msg.content}</p>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
+            
             {isLoading && (
-              <div className="bg-white p-3 rounded-lg mr-auto max-w-[80%] border shadow-sm">
-                <div className="flex space-x-2 items-center">
-                  <div className="w-2 h-2 bg-alzheimer-primary rounded-full animate-pulse"></div>
-                  <div className="w-2 h-2 bg-alzheimer-primary rounded-full animate-pulse delay-75"></div>
-                  <div className="w-2 h-2 bg-alzheimer-primary rounded-full animate-pulse delay-150"></div>
-                  <span className="text-sm text-gray-500">AI is typing...</span>
-                </div>
+              <div className="max-w-[90%]">
+                <Card className="bg-muted/50 border-dashed">
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                        <Bot className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="flex space-x-2 items-center">
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-100"></div>
+                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce delay-200"></div>
+                        <span className="text-sm text-muted-foreground ml-2">AI is analyzing your question...</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             )}
           </div>
-          {hasError && (
-            <Button 
-              variant="outline" 
-              onClick={retryConnection}
-              className="w-full mb-2 border-red-300 text-red-700 hover:bg-red-50"
-            >
-              <AlertCircle className="w-4 h-4 mr-2" /> Retry Connection
-            </Button>
-          )}
-          <form onSubmit={handleSubmit} className="flex gap-2">
-            <Textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Ask anything about Alzheimer's..."
-              className="flex-grow resize-none"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmit(e);
-                }
-              }}
-            />
-            <Button 
-              type="submit" 
-              disabled={isLoading}
-              className="bg-alzheimer-primary hover:bg-alzheimer-accent self-end"
-            >
-              <SendHorizontal className="w-4 h-4" />
-            </Button>
-          </form>
+          <div className="space-y-4">
+            {hasError && (
+              <Button 
+                variant="outline" 
+                onClick={retryConnection}
+                className="w-full border-destructive/30 text-destructive hover:bg-destructive/10"
+              >
+                <AlertCircle className="w-4 h-4 mr-2" /> Retry Connection
+              </Button>
+            )}
+            
+            <form onSubmit={handleSubmit} className="flex gap-3 items-end">
+              <div className="flex-grow space-y-2">
+                <Textarea
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Ask anything about Alzheimer's research, symptoms, treatments, or care strategies..."
+                  className="min-h-[60px] resize-none border-2 focus:border-primary/50 rounded-xl"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Press Enter to send, Shift + Enter for new line
+                </p>
+              </div>
+              <Button 
+                type="submit" 
+                disabled={isLoading || !message.trim()}
+                className="bg-primary hover:bg-primary/90 h-12 px-6 rounded-xl shadow-md hover:shadow-lg transition-all"
+              >
+                <SendHorizontal className="w-5 h-5" />
+              </Button>
+            </form>
+          </div>
         </div>
       </CardContent>
     </Card>
